@@ -1,0 +1,4936 @@
+"""
+The `@defer` directive may be provided for fragment spreads and inline fragments to inform the executor to delay the execution of the current fragment to indicate deprioritization of the current fragment. A query with `@defer` directive will cause the request to potentially return multiple responses, where non-deferred data is delivered in the initial response and data deferred is delivered in a subsequent response. `@include` and `@skip` take precedence over `@defer`.
+"""
+directive @defer(
+  """
+  If this argument label has a value other than null, it will be passed on to the result of this defer directive. This label is intended to give client applications a way to identify to which fragment a deferred result belongs to.
+  """
+  label: String
+
+  """
+  Deferred when true.
+  """
+  if: Boolean
+) on FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"""
+The `@stream` directive may be provided for a field of `List` type so that the backend can leverage technology such as asynchronous iterators to provide a partial list in the initial response, and additional list items in subsequent responses. `@include` and `@skip` take precedence over `@stream`.
+"""
+directive @stream(
+  """
+  If this argument label has a value other than null, it will be passed on to the result of this stream directive. This label is intended to give client applications a way to identify to which fragment a streamed result belongs to.
+  """
+  label: String
+
+  """
+  The initial elements that shall be send down to the consumer.
+  """
+  initialCount: Int! = 0
+
+  """
+  Streamed when true.
+  """
+  if: Boolean
+) on FIELD
+
+directive @authorize(
+  """
+  The name of the authorization policy that determines access to the annotated resource.
+  """
+  policy: String
+
+  """
+  Roles that are allowed to access the annotated resource.
+  """
+  roles: [String!]
+
+  """
+  Defines when when the resolver shall be executed.By default the resolver is executed after the policy has determined that the current user is allowed to access the field.
+  """
+  apply: ApplyPolicy! = BEFORE_RESOLVER
+) repeatable on SCHEMA | OBJECT | FIELD_DEFINITION
+
+"""
+A position is an array of numbers. There MUST be two or more elements. The first two elements are longitude and latitude, or easting and northing, precisely in that order and using decimal numbers. Altitude or elevation MAY be included as an optional third element.
+"""
+scalar Position
+
+interface GeoJSONInterface {
+  """
+  The geometry type of the GeoJson object
+  """
+  type: GeoJSONGeometryType!
+
+  """
+  The minimum bounding box around the geometry object
+  """
+  bbox: [Float]
+
+  """
+  The coordinate reference system integer identifier
+  """
+  crs: Int
+}
+
+input GeoJSONPointInput {
+  """
+  The geometry type of the GeoJson object
+  """
+  type: GeoJSONGeometryType
+
+  """
+  The "coordinates" field is a single position.
+  """
+  coordinates: Position
+
+  """
+  The coordinate reference system integer identifier
+  """
+  crs: Int
+}
+
+input GeoJSONMultiPointInput {
+  """
+  The geometry type of the GeoJson object
+  """
+  type: GeoJSONGeometryType
+
+  """
+  The "coordinates" field is an array of positions.
+  """
+  coordinates: [Position]
+
+  """
+  The coordinate reference system integer identifier
+  """
+  crs: Int
+}
+
+input GeoJSONLineStringInput {
+  """
+  The geometry type of the GeoJson object
+  """
+  type: GeoJSONGeometryType
+
+  """
+  The "coordinates" field is an array of two or more positions.
+  """
+  coordinates: [Position]
+
+  """
+  The coordinate reference system integer identifier
+  """
+  crs: Int
+}
+
+input GeoJSONMultiLineStringInput {
+  """
+  The geometry type of the GeoJson object
+  """
+  type: GeoJSONGeometryType
+
+  """
+  The "coordinates" field is an array of LineString coordinate arrays.
+  """
+  coordinates: [[Position]]
+
+  """
+  The coordinate reference system integer identifier
+  """
+  crs: Int
+}
+
+input GeoJSONPolygonInput {
+  """
+  The geometry type of the GeoJson object
+  """
+  type: GeoJSONGeometryType
+
+  """
+  The "coordinates" field MUST be an array of linear ring coordinate arrays. For Polygons with more than one of these rings, the first MUST be the exterior ring, and any others MUST be interior rings. The exterior ring bounds the surface, and the interior rings (if present) bound holes within the surface.
+  """
+  coordinates: [[Position]]
+
+  """
+  The coordinate reference system integer identifier
+  """
+  crs: Int
+}
+
+input GeoJSONMultiPolygonInput {
+  """
+  The geometry type of the GeoJson object
+  """
+  type: GeoJSONGeometryType
+
+  """
+  The "coordinates" field is an array of Polygon coordinate arrays.
+  """
+  coordinates: Coordinates
+
+  """
+  The coordinate reference system integer identifier
+  """
+  crs: Int
+}
+
+type GeoJSONPointType implements GeoJSONInterface {
+  """
+  The "coordinates" field is a single position.
+  """
+  coordinates: Position
+
+  """
+  The geometry type of the GeoJson object
+  """
+  type: GeoJSONGeometryType!
+
+  """
+  The minimum bounding box around the geometry object
+  """
+  bbox: [Float!]!
+
+  """
+  The coordinate reference system integer identifier
+  """
+  crs: Int!
+}
+
+type GeoJSONMultiPointType implements GeoJSONInterface {
+  """
+  The "coordinates" field is an array of positions.
+  """
+  coordinates: [Position]
+
+  """
+  The geometry type of the GeoJson object
+  """
+  type: GeoJSONGeometryType!
+
+  """
+  The minimum bounding box around the geometry object
+  """
+  bbox: [Float!]!
+
+  """
+  The coordinate reference system integer identifier
+  """
+  crs: Int!
+}
+
+type GeoJSONLineStringType implements GeoJSONInterface {
+  """
+  The "coordinates" field is an array of two or more positions.
+  """
+  coordinates: [Position]
+
+  """
+  The geometry type of the GeoJson object
+  """
+  type: GeoJSONGeometryType!
+
+  """
+  The minimum bounding box around the geometry object
+  """
+  bbox: [Float!]!
+
+  """
+  The coordinate reference system integer identifier
+  """
+  crs: Int!
+}
+
+type GeoJSONMultiLineStringType implements GeoJSONInterface {
+  """
+  The "coordinates" field is an array of LineString coordinate arrays.
+  """
+  coordinates: [Position]
+
+  """
+  The geometry type of the GeoJson object
+  """
+  type: GeoJSONGeometryType!
+
+  """
+  The minimum bounding box around the geometry object
+  """
+  bbox: [Float!]!
+
+  """
+  The coordinate reference system integer identifier
+  """
+  crs: Int!
+}
+
+type GeoJSONPolygonType implements GeoJSONInterface {
+  """
+  The "coordinates" field MUST be an array of linear ring coordinate arrays. For Polygons with more than one of these rings, the first MUST be the exterior ring, and any others MUST be interior rings. The exterior ring bounds the surface, and the interior rings (if present) bound holes within the surface.
+  """
+  coordinates: [[Position]]
+
+  """
+  The geometry type of the GeoJson object
+  """
+  type: GeoJSONGeometryType!
+
+  """
+  The minimum bounding box around the geometry object
+  """
+  bbox: [Float!]!
+
+  """
+  The coordinate reference system integer identifier
+  """
+  crs: Int!
+}
+
+type GeoJSONMultiPolygonType implements GeoJSONInterface {
+  """
+  The "coordinates" field is an array of Polygon coordinate arrays.
+  """
+  coordinates: Coordinates
+
+  """
+  The geometry type of the GeoJson object
+  """
+  type: GeoJSONGeometryType!
+
+  """
+  The minimum bounding box around the geometry object
+  """
+  bbox: [Float!]!
+
+  """
+  The coordinate reference system integer identifier
+  """
+  crs: Int!
+}
+
+enum GeoJSONGeometryType {
+  Point
+  MultiPoint
+  LineString
+  MultiLineString
+  Polygon
+  MultiPolygon
+  GeometryCollection
+}
+
+scalar Geometry
+
+type Query {
+  activit_getActivit(entityId: Int!): SingleResponseBaseOfActivity
+  activit_getActivity: ListResponseBaseOfActivity
+  baseCollectio_getBaseCollectio(
+    entityId: Int!
+  ): SingleResponseBaseOfBaseCollection
+  baseCollectio_getBaseCollection: ListResponseBaseOfBaseCollection
+  bloc_getBloc(entityId: Int!): SingleResponseBaseOfBlock
+  bloc_getBlock: ListResponseBaseOfBlock
+  categor_getCategor(entityId: Int!): SingleResponseBaseOfCategory
+  categor_getCategory: ListResponseBaseOfCategory
+  collectio_getCollectio(entityId: Int!): SingleResponseBaseOfCollection
+  collectio_getCollection: ListResponseBaseOfCollection
+  commentLik_getCommentLik(entityId: Int!): SingleResponseBaseOfCommentLike
+  commentLik_getCommentLike: ListResponseBaseOfCommentLike
+  commen_getCommen(entityId: Int!): SingleResponseBaseOfComment
+  commen_getComment: ListResponseBaseOfComment
+  follo_getFollo(entityId: Int!): SingleResponseBaseOfFollow
+  follo_getFollow: ListResponseBaseOfFollow
+  hashta_getHashta(entityId: Int!): SingleResponseBaseOfHashtag
+  hashta_getHashtag: ListResponseBaseOfHashtag
+  postCategor_getPostCategor(entityId: Int!): SingleResponseBaseOfPostCategory
+  postCategor_getPostCategory: ListResponseBaseOfPostCategory
+  postLik_getPostLik(entityId: Int!): SingleResponseBaseOfPostLike
+  postLik_getPostLike: ListResponseBaseOfPostLike
+  pos_getPos(entityId: Int!): SingleResponseBaseOfPost
+  pos_getPost: ListResponseBaseOfPost
+  postSav_getPostSav(entityId: Int!): SingleResponseBaseOfPostSave
+  postSav_getPostSave: ListResponseBaseOfPostSave
+  postVie_getPostVie(entityId: Int!): SingleResponseBaseOfPostView
+  postVie_getPostView: ListResponseBaseOfPostView
+  reportCommen_getReportCommen(
+    entityId: Int!
+  ): SingleResponseBaseOfReportComment
+  reportCommen_getReportComment: ListResponseBaseOfReportComment
+  reportPos_getReportPos(entityId: Int!): SingleResponseBaseOfReportPost
+  reportPos_getReportPost: ListResponseBaseOfReportPost
+  reportTopicPostCommen_getReportTopicPostCommen(
+    entityId: Int!
+  ): SingleResponseBaseOfReportTopicPostComment
+  reportTopicPostCommen_getReportTopicPostComment: ListResponseBaseOfReportTopicPostComment
+  reportTopicPos_getReportTopicPos(
+    entityId: Int!
+  ): SingleResponseBaseOfReportTopicPost
+  reportTopicPos_getReportTopicPost: ListResponseBaseOfReportTopicPost
+  reportUse_getReportUse(entityId: Int!): SingleResponseBaseOfReportUser
+  reportUse_getReportUser: ListResponseBaseOfReportUser
+  topicPostCommentLik_getTopicPostCommentLik(
+    entityId: Int!
+  ): SingleResponseBaseOfTopicPostCommentLike
+  topicPostCommentLik_getTopicPostCommentLike: ListResponseBaseOfTopicPostCommentLike
+  topicPostCommen_getTopicPostCommen(
+    entityId: Int!
+  ): SingleResponseBaseOfTopicPostComment
+  topicPostCommen_getTopicPostComment: ListResponseBaseOfTopicPostComment
+  topicPostLik_getTopicPostLik(
+    entityId: Int!
+  ): SingleResponseBaseOfTopicPostLike
+  topicPostLik_getTopicPostLike: ListResponseBaseOfTopicPostLike
+  topicPos_getTopicPos(entityId: Int!): SingleResponseBaseOfTopicPost
+  topicPos_getTopicPost: ListResponseBaseOfTopicPost
+  topi_getTopi(entityId: Int!): SingleResponseBaseOfTopic
+  topi_getTopic: ListResponseBaseOfTopic
+  topicUse_getTopicUse(entityId: Int!): SingleResponseBaseOfTopicUser
+  topicUse_getTopicUser: ListResponseBaseOfTopicUser
+  userCategor_getUserCategor(entityId: Int!): SingleResponseBaseOfUserCategory
+  userCategor_getUserCategory: ListResponseBaseOfUserCategory
+  use_getUse(entityId: Int!): SingleResponseBaseOfUser
+  use_getUser: ListResponseBaseOfUser
+  buddy_getBuddies: ListResponseBaseOfBuddyDto
+  user_getLotusStatus: ResponseBaseOfUserLotusDto
+  user_login: ResponseBaseOfUser
+  user_getProfile(userId: Int): SingleResponseBaseOfUser
+  user_getAllUsers: ListResponseBaseOfUser
+  user_getActivestUsers(
+    activityType: ActivityType!
+    fromDate: DateTime
+    toDate: DateTime
+  ): ListResponseBaseOfUser
+  user_getPostViewsPerMonth(userId: Int): ListResponseBaseOfMonthlyReportDto
+  user_getPostViewsPerYear(userId: Int): ListResponseBaseOfYearlyReportDto
+  user_getPostLikesPerMonth(userId: Int): ListResponseBaseOfMonthlyReportDto
+  user_getPostLikesPerYear(userId: Int): ListResponseBaseOfYearlyReportDto
+  user_getUserCountPerYear: ListResponseBaseOfYearlyReportDto
+  user_getUserCountPerMonth: ListResponseBaseOfMonthlyReportDto
+  user_signIn: SingleResponseBaseOfUser
+  user_getCurrentUser: SingleResponseBaseOfUser
+  category_getCategory(entityId: Int!): SingleResponseBaseOfCategory
+  category_getCategories: ListResponseBaseOfCategory
+  userCategory_getUserCategory(entityId: Int!): SingleResponseBaseOfUserCategory
+  userCategory_getUserCategories: ListResponseBaseOfUserCategory
+  post_getPost(entityId: Int!): SingleResponseBaseOfPost
+  post_getPosts: ListResponseBaseOfPost
+  post_getByUserId(userId: Int!): ListResponseBaseOfPost
+  post_getByCategoryId(categoryId: Int!): ListResponseBaseOfPost
+  post_getByCategoryIds(categoryIds: [Int!]): ListResponseBaseOfPost
+  post_getFollowingPosts(categoryIds: [Int!]): ListResponseBaseOfPost
+  post_getMostPopular(categoryIds: [Int!]): ListResponseBaseOfPost
+  post_getPostsNearMe(
+    categoryIds: [Int!]
+    location: Position
+  ): ListResponseBaseOfPost
+  post_getByHashtagIds(hashtagIds: [Int!]): ListResponseBaseOfPost
+  post_getMostCommentedPosts: ListResponseBaseOfPost
+  post_getUnViewedPosts: ListResponseBaseOfPost
+  post_getPostCountPerYear(
+    fileType: FileType!
+  ): ListResponseBaseOfYearlyReportDto
+  post_getPostCountPerMonth(
+    fileType: FileType!
+  ): ListResponseBaseOfMonthlyReportDto
+  post_getLikeCountPerYear: ListResponseBaseOfYearlyReportDto
+  post_getLikeCountPerMonth: ListResponseBaseOfMonthlyReportDto
+  post_getCommentCountPerYear: ListResponseBaseOfYearlyReportDto
+  post_getCommentCountPerMonth: ListResponseBaseOfMonthlyReportDto
+  post_getPostsByCategoryAndFileType(
+    fromDate: DateTime!
+    toDate: DateTime!
+    fileType: FileType!
+  ): ListResponseBaseOfPostsByCategoryAndFileTypeDto
+  postCategory_getPostCategory(entityId: Int!): SingleResponseBaseOfPostCategory
+  postCategory_getPostCategories: ListResponseBaseOfPostCategory
+  comment_getComment(entityId: Int!): SingleResponseBaseOfComment
+  comment_getComments: ListResponseBaseOfComment
+  comment_customeGetComments: ListResponseBaseOfCommentDto
+  comment_getByUserId(userId: Int!): ListResponseBaseOfComment
+  comment_getByPostId(postId: Int!): ListResponseBaseOfComment
+  postLike_getByUserId(userId: Int!): ListResponseBaseOfPostLike
+  postLike_getByPostId(postId: Int!): ListResponseBaseOfPostLike
+  postLike_getPostLike(entityId: Int!): SingleResponseBaseOfPostLike
+  postLike_getPostLikes: ListResponseBaseOfPostLike
+  collection_getByBaseCollectionId(
+    baseCollectionId: Int!
+  ): ListResponseBaseOfCollection
+  collection_getByPostId(postId: Int!): ListResponseBaseOfCollection
+  collection_getCollection(entityId: Int!): SingleResponseBaseOfCollection
+  collection_getCollections: ListResponseBaseOfCollection
+  block_getByBlockerUserId(blockerUserId: Int!): ListResponseBaseOfBlock
+  block_getByBlockedUserId(blockedUserId: Int!): ListResponseBaseOfBlock
+  block_getBlock(entityId: Int!): SingleResponseBaseOfBlock
+  block_getBlocks: ListResponseBaseOfBlock
+  reportUser_getReportUser(entityId: Int!): SingleResponseBaseOfReportUser
+  reportUser_getReportUsers: ListResponseBaseOfReportUser
+  reportUser_getByReporterUserId(
+    reporterUserId: Int!
+  ): ListResponseBaseOfReportUser
+  reportUser_getByReportedUserId(
+    reportedUserId: Int!
+  ): ListResponseBaseOfReportUser
+  reportPost_getByReporterUserId(
+    reporterUserId: Int!
+  ): ListResponseBaseOfReportPost
+  reportPost_getByPostId(postId: Int!): ListResponseBaseOfReportPost
+  reportPost_getReportPost(entityId: Int!): SingleResponseBaseOfReportPost
+  reportPost_getReportPosts: ListResponseBaseOfReportPost
+  reportComment_getByReporterUserId(
+    reporterUserId: Int!
+  ): ListResponseBaseOfReportComment
+  reportComment_getByCommentId(commentId: Int!): ListResponseBaseOfReportComment
+  reportComment_getReportComment(
+    entityId: Int!
+  ): SingleResponseBaseOfReportComment
+  reportComment_getReportComments: ListResponseBaseOfReportComment
+  follow_getFollowers(followingId: Int!): ListResponseBaseOfFollow
+  follow_customeGetFollowers(userId: Int!): ListResponseBaseOfFollowerDto
+  follow_getFollowings(followerId: Int!): ListResponseBaseOfFollow
+  follow_getFollow(entityId: Int!): SingleResponseBaseOfFollow
+  follow_getFollows: ListResponseBaseOfFollow
+  activity_getByUserId(userId: Int!): ListResponseBaseOfActivity
+  activity_getByTargetUserId(targetUserId: Int!): ListResponseBaseOfActivity
+  activity_getByTargetPostId(targetPostId: Int!): ListResponseBaseOfActivity
+  activity_getByTargetCommentId(
+    targetCommentId: Int!
+  ): ListResponseBaseOfActivity
+  activity_getActivity(entityId: Int!): SingleResponseBaseOfActivity
+  activity_getActivities: ListResponseBaseOfActivity
+  activities_getByDateRange(
+    activityType: ActivityType
+    fromDate: DateTime
+    toDate: DateTime
+  ): ListResponseBaseOfActivity
+  activity_getUsersActivitiesByCount(
+    fromDate: DateTime!
+    toDate: DateTime!
+  ): ListResponseBaseOfUsersActivitiesByCountDto
+  postView_getByUserId(userId: Int!): ListResponseBaseOfPostView
+  postView_getByPostId(postId: Int!): ListResponseBaseOfPostView
+  postView_getPostView(entityId: Int!): SingleResponseBaseOfPostView
+  postView_getPostViews: ListResponseBaseOfPostView
+  topic_getTopic(entityId: Int!): SingleResponseBaseOfTopic
+  topic_getTopics: ListResponseBaseOfTopic
+  topic_getMostPopular: ListResponseBaseOfTopic
+  topic_getTopicsReport: ListResponseBaseOfTopicReportDto
+  reportTopicPost_getByReporterUserId(
+    reporterUserId: Int!
+  ): ListResponseBaseOfReportTopicPost
+  reportTopicPost_getByTopicPostId(
+    topicPostId: Int!
+  ): ListResponseBaseOfReportTopicPost
+  reportTopicPost_getReportTopicPost(
+    entityId: Int!
+  ): SingleResponseBaseOfReportTopicPost
+  reportTopicPost_getReportTopicPosts: ListResponseBaseOfReportTopicPost
+  commentLike_getByUserId(userId: Int!): ListResponseBaseOfCommentLike
+  commentLike_getByCommentId(commentId: Int!): ListResponseBaseOfCommentLike
+  CommentLike_getCommentLike(entityId: Int!): SingleResponseBaseOfCommentLike
+  CommentLike_getCommentLikes: ListResponseBaseOfCommentLike
+  topicUser_getTopicUser(entityId: Int!): SingleResponseBaseOfTopicUser
+  topicUser_getTopicUsers: ListResponseBaseOfTopicUser
+  topicUser_getByInvitedByUserId(userId: Int!): ListResponseBaseOfTopicUser
+  topicUser_getByUserId(userId: Int!): ListResponseBaseOfTopicUser
+  topicUser_getByTopicId(topicId: Int!): ListResponseBaseOfTopicUser
+  topicPost_getTopicPost(entityId: Int!): SingleResponseBaseOfTopicPost
+  topicPost_getTopicPosts: ListResponseBaseOfTopicPost
+  topicPost_getByUserId(userId: Int!): ListResponseBaseOfTopicPost
+  topicPost_getByTopicId(topicId: Int!): ListResponseBaseOfTopicPost
+  topicPost_getByHashtagIds(hashtagIds: [Int!]): ListResponseBaseOfTopicPost
+  topicPostComment_getTopicPostComment(
+    entityId: Int!
+  ): SingleResponseBaseOfTopicPostComment
+  topicPostComment_getTopicPostComments: ListResponseBaseOfTopicPostComment
+  topicPostComment_customeGetTopicPostComments: ListResponseBaseOfTopicPostCommentDto
+  TopicPostComment_getByUserId(userId: Int!): ListResponseBaseOfTopicPostComment
+  topicPostComment_getByTopicPostId(
+    topicPostId: Int!
+  ): ListResponseBaseOfTopicPostComment
+  topicPostCommentLike_getByUserId(
+    userId: Int!
+  ): ListResponseBaseOfTopicPostCommentLike
+  topicPostCommentLike_getByTopicPostCommentId(
+    topicPostCommentId: Int!
+  ): ListResponseBaseOfTopicPostCommentLike
+  topicPostCommentLike_getTopicPostCommentLike(
+    entityId: Int!
+  ): SingleResponseBaseOfTopicPostCommentLike
+  topicPostCommentLike_getTopicPostCommentLikes: ListResponseBaseOfTopicPostCommentLike
+  topicPostLike_getByUserId(userId: Int!): ListResponseBaseOfTopicPostLike
+  topicPostLike_getByTopicPostId(
+    topicPostId: Int!
+  ): ListResponseBaseOfTopicPostLike
+  topicPostLike_getTopicPostLike(
+    entityId: Int!
+  ): SingleResponseBaseOfTopicPostLike
+  topicPostLike_getTopicPostLikes: ListResponseBaseOfTopicPostLike
+  message_getConversation(conversationId: Int!): ListResponseBaseOfMessage
+  message_getUserMessages(
+    includeDeletedRows: Boolean! = false
+  ): ListResponseBaseOfConversationInput
+  message_getConversationForUser(otherUserId: Int!): ResponseBaseOfConversation
+  notification_getNotifications: ListResponseBaseOfNotification
+  hashtag_getHashtag(entityId: Int!): SingleResponseBaseOfHashtag
+  hashtag_getHashtags: ListResponseBaseOfHashtag
+  baseCollection_getByUserId(userId: Int!): ListResponseBaseOfBaseCollection
+  baseCollection_getBaseCollection(
+    entityId: Int!
+  ): SingleResponseBaseOfBaseCollection
+  baseCollection_getBaseCollections: ListResponseBaseOfBaseCollection
+  get(entityId: Int!): SingleResponseBaseOfPostSave
+  items: ListResponseBaseOfPostSave
+  postSave_getByPostId(postId: Int!): SingleResponseBaseOfPostSave
+  postSave_getPostSave(entityId: Int!): SingleResponseBaseOfPostSave
+  postSave_getPostSaves: ListResponseBaseOfPostSave
+}
+
+type Mutation {
+  activit_createActivit(input: ActivityInput): ResponseBaseOfActivity
+  activit_updateActivit(input: ActivityInput): ResponseBaseOfActivity
+  activit_deleteActivit(entityId: Int!): ResponseStatus
+  baseCollectio_createBaseCollectio(
+    title: String
+    postIds: [Int!]
+  ): ResponseBaseOfBaseCollection
+  baseCollectio_updateBaseCollectio(
+    input: BaseCollectionInput
+    postIds: [Int!]
+  ): ResponseBaseOfBaseCollection
+  baseCollectio_deleteBaseCollectio(entityId: Int!): ResponseStatus
+  bloc_createBloc(input: BlockInput): ResponseBaseOfBlock
+  bloc_updateBloc(input: BlockInput): ResponseBaseOfBlock
+  bloc_deleteBloc(entityId: Int!): ResponseStatus
+  categor_createCategor(input: CategoryInput): ResponseBaseOfCategory
+  categor_updateCategor(input: CategoryInput): ResponseBaseOfCategory
+  categor_deleteCategor(entityId: Int!): ResponseStatus
+  collectio_createCollectio(input: CollectionInput): ResponseBaseOfCollection
+  collectio_updateCollectio(input: CollectionInput): ResponseBaseOfCollection
+  collectio_deleteCollectio(
+    postId: Int!
+    baseCollectionId: Int!
+  ): ResponseStatus
+  commentLik_createCommentLik(
+    input: CommentLikeInput
+  ): ResponseBaseOfCommentLike
+  commentLik_updateCommentLik(
+    input: CommentLikeInput
+  ): ResponseBaseOfCommentLike
+  commentLik_deleteCommentLik(userId: Int!, commentId: Int!): ResponseStatus
+  commen_createCommen(input: CommentInput): ResponseBaseOfComment
+  commen_updateCommen(input: CommentInput): ResponseBaseOfComment
+  commen_deleteCommen(entityId: Int!): ResponseStatus
+  follo_createFollo(input: FollowInput): ResponseBaseOfFollow
+  follo_updateFollo(input: FollowInput): ResponseBaseOfFollow
+  follo_deleteFollo(entityId: Int!): ResponseStatus
+  postCategor_createPostCategor(
+    input: PostCategoryInput
+  ): ResponseBaseOfPostCategory
+  postCategor_updatePostCategor(
+    input: PostCategoryInput
+  ): ResponseBaseOfPostCategory
+  postCategor_deletePostCategor(entityId: Int!): ResponseStatus
+  postLik_createPostLik(input: PostLikeInput): ResponseBaseOfPostLike
+  postLik_updatePostLik(input: PostLikeInput): ResponseBaseOfPostLike
+  postLik_deletePostLik(userId: Int!, postId: Int!): ResponseStatus
+  pos_createPos(input: PostInput): ResponseBaseOfPost
+  pos_updatePos(input: PostInput, categories: [Int!]): ResponseBaseOfPost
+  pos_deletePos(entityId: Int!): ResponseStatus
+  postSav_createPostSav(input: PostSaveInput): ResponseBaseOfPostSave
+  postSav_updatePostSav(input: PostSaveInput): ResponseBaseOfPostSave
+  postSav_deletePostSav(postId: Int!): ResponseStatus
+  postVie_createPostVie(input: PostViewInput): ResponseBaseOfPostView
+  postVie_updatePostVie(input: PostViewInput): ResponseBaseOfPostView
+  postVie_deletePostVie(userId: Int!, postId: Int!): ResponseStatus
+  reportCommen_createReportCommen(
+    input: ReportCommentInput
+  ): ResponseBaseOfReportComment
+  reportCommen_updateReportCommen(
+    input: ReportCommentInput
+  ): ResponseBaseOfReportComment
+  reportCommen_deleteReportCommen(entityId: Int!): ResponseStatus
+  reportPos_createReportPos(input: ReportPostInput): ResponseBaseOfReportPost
+  reportPos_updateReportPos(input: ReportPostInput): ResponseBaseOfReportPost
+  reportPos_deleteReportPos(entityId: Int!): ResponseStatus
+  reportTopicPostCommen_createReportTopicPostCommen(
+    input: ReportTopicPostCommentInput
+  ): ResponseBaseOfReportTopicPostComment
+  reportTopicPostCommen_updateReportTopicPostCommen(
+    input: ReportTopicPostCommentInput
+  ): ResponseBaseOfReportTopicPostComment
+  reportTopicPostCommen_deleteReportTopicPostCommen(
+    entityId: Int!
+  ): ResponseStatus
+  reportTopicPos_createReportTopicPos(
+    input: ReportTopicPostInput
+  ): ResponseBaseOfReportTopicPost
+  reportTopicPos_updateReportTopicPos(
+    input: ReportTopicPostInput
+  ): ResponseBaseOfReportTopicPost
+  reportTopicPos_deleteReportTopicPos(entityId: Int!): ResponseStatus
+  reportUse_createReportUse(input: ReportUserInput): ResponseBaseOfReportUser
+  reportUse_updateReportUse(input: ReportUserInput): ResponseBaseOfReportUser
+  reportUse_deleteReportUse(entityId: Int!): ResponseStatus
+  topi_createTopi(
+    input: TopicInput
+    invitedUserIds: [Int!]
+  ): ResponseBaseOfTopic
+  topi_updateTopi(input: TopicInput): ResponseBaseOfTopic
+  topi_deleteTopi(entityId: Int!): ResponseStatus
+  topicPostCommentLik_createTopicPostCommentLik(
+    input: TopicPostCommentLikeInput
+  ): ResponseBaseOfTopicPostCommentLike
+  topicPostCommentLik_updateTopicPostCommentLik(
+    input: TopicPostCommentLikeInput
+  ): ResponseBaseOfTopicPostCommentLike
+  topicPostCommentLik_deleteTopicPostCommentLik(
+    userId: Int!
+    commentId: Int!
+  ): ResponseStatus
+  topicPostCommen_createTopicPostCommen(
+    input: TopicPostCommentInput
+  ): ResponseBaseOfTopicPostComment
+  topicPostCommen_updateTopicPostCommen(
+    input: TopicPostCommentInput
+  ): ResponseBaseOfTopicPostComment
+  topicPostCommen_deleteTopicPostCommen(entityId: Int!): ResponseStatus
+  topicPostLik_createTopicPostLik(
+    input: TopicPostLikeInput
+  ): ResponseBaseOfTopicPostLike
+  topicPostLik_updateTopicPostLik(
+    input: TopicPostLikeInput
+  ): ResponseBaseOfTopicPostLike
+  topicPostLik_deleteTopicPostLik(
+    userId: Int!
+    topicPostId: Int!
+  ): ResponseStatus
+  topicPos_createTopicPos(input: TopicPostInput): ResponseBaseOfTopicPost
+  topicPos_updateTopicPos(input: TopicPostInput): ResponseBaseOfTopicPost
+  topicPos_deleteTopicPos(entityId: Int!): ResponseStatus
+  topicUse_createTopicUse(input: TopicUserInput): ResponseBaseOfTopicUser
+  topicUse_updateTopicUse(input: TopicUserInput): ResponseBaseOfTopicUser
+  topicUse_deleteTopicUse(entityId: Int!): ResponseStatus
+  userCategor_createUserCategor(
+    input: UserCategoryInput
+  ): ResponseBaseOfUserCategory
+  userCategor_updateUserCategor(
+    input: UserCategoryInput
+  ): ResponseBaseOfUserCategory
+  userCategor_deleteUserCategor(entityId: Int!): ResponseStatus
+  use_createUse(input: UserInput): ResponseBaseOfUser
+  use_updateUse(input: UserInput): ResponseBaseOfUser
+  use_deleteUse(entityId: Int!): ResponseStatus
+  user_updateProfile(userInput: UserInput): ResponseBaseOfUser
+  user_changeNotificationDetail(
+    userInput: UserNotificationDetailInput
+  ): ResponseBaseOfUser
+  user_signUpArtist(userInput: UserInput): ResponseBaseOfUser
+  user_createAdmin(
+    userInput: UserInput
+    email: String
+    password: String
+  ): ResponseBaseOfUser
+  user_changeUserActivation(
+    userId: Int!
+    isActive: Boolean!
+  ): ResponseBaseOfUser
+  user_getNearbyUsers(
+    currentLocation: Position
+    updateLocation: Boolean! = true
+  ): ListResponseBaseOfUserDistanceDto
+  user_deleteAccount(userId: Int!): ResponseBaseOfUser
+  user_removeUser: ResponseStatus
+  category_createCategory(input: CategoryInput): ResponseBaseOfCategory
+  category_updateCategory(input: CategoryInput): ResponseBaseOfCategory
+  category_deleteCategory(entityId: Int!): ResponseStatus
+  userCategory_createUserCategory(
+    input: UserCategoryInput
+  ): ResponseBaseOfUserCategory
+  userCategory_createByCategoryIds(
+    userId: Int!
+    categoryIds: [Int!]
+  ): ListResponseBaseOfUserCategory
+  userCategory_deleteUserCategory(entityId: Int!): ResponseStatus
+  userCategory_updateUserCategory(
+    input: UserCategoryInput
+  ): ResponseBaseOfUserCategory
+  post_createPost(
+    input: PostInput
+    categories: [Int!]
+    hashtags: [String]
+  ): ResponseBaseOfPost
+  post_updatePost(input: PostInput, categories: [Int!]): ResponseBaseOfPost
+  post_setAsRecommended(
+    entityId: Int!
+    setAsRecommended: Boolean!
+  ): ResponseBaseOfPost
+  post_deletePost(entityId: Int!): ResponseStatus
+  remove(entityId: Int!): ResponseStatus
+  postCategory_createPostCategory(
+    input: PostCategoryInput
+  ): ResponseBaseOfPostCategory
+  postCategory_updatePostCategory(
+    input: PostCategoryInput
+  ): ResponseBaseOfPostCategory
+  postCategory_deletePostCategory(entityId: Int!): ResponseStatus
+  comment_createComment(input: CommentInput): ResponseBaseOfComment
+  comment_updateComment(input: CommentInput): ResponseBaseOfComment
+  comment_likeComment(id: Int!): ResponseBaseOfComment
+  comment_disLikeComment(id: Int!): ResponseBaseOfComment
+  comment_deleteComment(entityId: Int!): ResponseStatus
+  postLike_createPostLike(input: PostLikeInput): ResponseBaseOfPostLike
+  postLike_deletePostLike(userId: Int!, postId: Int!): ResponseStatus
+  buddy_createBuddy(input: InsertBuddyInput): ResponseBaseOfBuddyDto
+  buddy_updateBuddy(input: UpdateBuddyInput): ResponseBaseOfBuddyDto
+  collection_createCollection(input: CollectionInput): ResponseBaseOfCollection
+  collection_updateCollection(input: CollectionInput): ResponseBaseOfCollection
+  collection_deleteFromCollection(
+    postId: Int!
+    baseCollectionId: Int!
+  ): ResponseStatus
+  block_createBlock(input: BlockInput): ResponseBaseOfBlock
+  block_updateBlock(input: BlockInput): ResponseBaseOfBlock
+  block_deleteBlock(entityId: Int!): ResponseStatus
+  reportUser_createReportUser(input: ReportUserInput): ResponseBaseOfReportUser
+  reportUser_updateReportUser(input: ReportUserInput): ResponseBaseOfReportUser
+  reportUser_setAsReviewed(entityId: Int!): ResponseBaseOfReportUser
+  reportUser_deleteReportUser(entityId: Int!): ResponseStatus
+  reportPost_createReportPost(input: ReportPostInput): ResponseBaseOfReportPost
+  reportPost_updateReportPost(input: ReportPostInput): ResponseBaseOfReportPost
+  reportPost_setAsReviewed(entityId: Int!): ResponseBaseOfReportPost
+  reportPost_deleteReportPost(entityId: Int!): ResponseStatus
+  create(input: PostSaveInput): ResponseBaseOfPostSave
+  delete(entityId: Int!): ResponseStatus
+  update(input: PostSaveInput): ResponseBaseOfPostSave
+  reportComment_createReportComment(
+    input: ReportCommentInput
+  ): ResponseBaseOfReportComment
+  reportComment_updateReportComment(
+    input: ReportCommentInput
+  ): ResponseBaseOfReportComment
+  reportComment_setAsReviewed(entityId: Int!): ResponseBaseOfReportComment
+  reportComment_deleteReportComment(entityId: Int!): ResponseStatus
+  follow_createFollow(input: FollowInput): ResponseBaseOfFollow
+  follow_deleteFollow(entityId: Int!): ResponseStatus
+  follow_deleteFollowByFollowingId(followingId: Int!): ResponseStatus
+  postView_createPostView(input: PostViewInput): ResponseBaseOfPostView
+  postView_deletePostView(userId: Int!, postId: Int!): ResponseStatus
+  topic_createTopic(
+    input: TopicInput
+    invitedUserIds: [Int!]
+  ): ResponseBaseOfTopic
+  topic_updateTopic(input: TopicInput): ResponseBaseOfTopic
+  topic_deleteTopic(entityId: Int!): ResponseStatus
+  reportTopicPost_createReportTopicPost(
+    input: ReportTopicPostInput
+  ): ResponseBaseOfReportTopicPost
+  reportTopicPost_updateReportTopicPost(
+    input: ReportTopicPostInput
+  ): ResponseBaseOfReportTopicPost
+  reportTopicPost_setAsReviewed(entityId: Int!): ResponseBaseOfReportTopicPost
+  reportTopicPost_deleteReportTopicPost(entityId: Int!): ResponseStatus
+  commentLike_createCommentLike(
+    input: CommentLikeInput
+  ): ResponseBaseOfCommentLike
+  commentLike_deleteCommentLike(userId: Int!, commentId: Int!): ResponseStatus
+  topicUser_createTopicUser(input: TopicUserInput): ResponseBaseOfTopicUser
+  topicUser_createByTopicIds(
+    userId: Int!
+    topicIds: [Int!]
+  ): ListResponseBaseOfTopicUser
+  topicUser_updateTopicUser(input: TopicUserInput): ResponseBaseOfTopicUser
+  topicUser_deleteTopicUser(entityId: Int!): ResponseStatus
+  topicUser_customDeleteTopicUser(userId: Int!, topicId: Int!): ResponseStatus
+  topicPost_createTopicPost(
+    input: TopicPostInput
+    hashtags: [String]
+  ): ResponseBaseOfTopicPost
+  topicPost_updateTopicPost(input: TopicPostInput): ResponseBaseOfTopicPost
+  topicPost_setAsRecommended(
+    entityId: Int!
+    setAsRecommended: Boolean!
+  ): ResponseBaseOfTopicPost
+  topicPost_deleteTopicPost(entityId: Int!): ResponseStatus
+  topicPostComment_createTopicPostComment(
+    input: TopicPostCommentInput
+  ): ResponseBaseOfTopicPostComment
+  topicPostComment_updateTopicPostComment(
+    input: TopicPostCommentInput
+  ): ResponseBaseOfTopicPostComment
+  topicPostComment_deleteTopicPostComment(entityId: Int!): ResponseStatus
+  topicPostCommentLike_createTopicPostCommentLike(
+    input: TopicPostCommentLikeInput
+  ): ResponseBaseOfTopicPostCommentLike
+  topicPostCommentLike_deleteTopicPostCommentLike(
+    userId: Int!
+    commentId: Int!
+  ): ResponseStatus
+  topicPostLike_createTopicPostLike(
+    input: TopicPostLikeInput
+  ): ResponseBaseOfTopicPostLike
+  TopicPostLike_deleteTopicPostLike(
+    userId: Int!
+    topicPostId: Int!
+  ): ResponseStatus
+  message_createMessage(messageInput: MessageInput): ResponseBaseOfMessage
+  message_removeConversation(conversationId: Int!): ResponseBase
+  message_deleteMessage(messageId: Int!): ResponseBase
+  message_forwardPostInConversation(
+    input: ForwardPostInput
+  ): ResponseBaseOfMessage
+  message_forwardTopicPostInConversation(
+    input: ForwardTopicPostInput
+  ): ResponseBaseOfMessage
+  notification_readNotification(
+    notificationId: Int!
+  ): ResponseBaseOfNotification
+  notification_readAllNotifications(ids: [Int!]): ResponseBase
+  baseCollection_createBaseCollection(
+    title: String
+    postIds: [Int!]
+  ): ResponseBaseOfBaseCollection
+  baseCollection_updateBaseCollection(
+    input: BaseCollectionInput
+    postIds: [Int!]
+  ): ResponseBaseOfBaseCollection
+  baseCollection_deleteBaseCollection(entityId: Int!): ResponseStatus
+  postSave_createPostSave(input: PostSaveInput): ResponseBaseOfPostSave
+  postSave_deletePostSave(postId: Int!): ResponseStatus
+}
+
+type Subscription {
+  testSubscription: Int!
+  messageAdded(userId: Int!): Message
+  notificationAdded(userId: Int!): Notification
+}
+
+input PointSortInput {
+  x: SortEnumType
+  y: SortEnumType
+  z: SortEnumType
+}
+
+"""
+A coordinate is an array of positions.
+"""
+scalar Coordinates
+
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+enum ApplyPolicy {
+  BEFORE_RESOLVER
+  AFTER_RESOLVER
+}
+
+type SingleResponseBaseOfActivity {
+  result: Activity
+  status: Any
+}
+
+type ListResponseBaseOfActivity {
+  result(
+    skip: Int
+    take: Int
+    where: ActivityFilterInput
+    order: [ActivitySortInput!]
+  ): ActivityCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfBaseCollection {
+  result: BaseCollection
+  status: Any
+}
+
+type ListResponseBaseOfBaseCollection {
+  result(
+    skip: Int
+    take: Int
+    where: BaseCollectionFilterInput
+    order: [BaseCollectionSortInput!]
+  ): BaseCollectionCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfBlock {
+  result: Block
+  status: Any
+}
+
+type ListResponseBaseOfBlock {
+  result(
+    skip: Int
+    take: Int
+    where: BlockFilterInput
+    order: [BlockSortInput!]
+  ): BlockCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfCategory {
+  result: Category
+  status: Any
+}
+
+type ListResponseBaseOfCategory {
+  result(
+    skip: Int
+    take: Int
+    where: CategoryFilterInput
+    order: [CategorySortInput!]
+  ): CategoryCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfCollection {
+  result: Collection
+  status: Any
+}
+
+type ListResponseBaseOfCollection {
+  result(
+    skip: Int
+    take: Int
+    where: CollectionFilterInput
+    order: [CollectionSortInput!]
+  ): CollectionCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfCommentLike {
+  result: CommentLike
+  status: Any
+}
+
+type ListResponseBaseOfCommentLike {
+  result(
+    skip: Int
+    take: Int
+    where: CommentLikeFilterInput
+    order: [CommentLikeSortInput!]
+  ): CommentLikeCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfComment {
+  result: Comment
+  status: Any
+}
+
+type ListResponseBaseOfComment {
+  result(
+    skip: Int
+    take: Int
+    where: CommentFilterInput
+    order: [CommentSortInput!]
+  ): CommentCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfFollow {
+  result: Follow
+  status: Any
+}
+
+type ListResponseBaseOfFollow {
+  result(
+    skip: Int
+    take: Int
+    where: FollowFilterInput
+    order: [FollowSortInput!]
+  ): FollowCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfHashtag {
+  result: Hashtag
+  status: Any
+}
+
+type ListResponseBaseOfHashtag {
+  result(
+    skip: Int
+    take: Int
+    where: HashtagFilterInput
+    order: [HashtagSortInput!]
+  ): HashtagCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfPostCategory {
+  result: PostCategory
+  status: Any
+}
+
+type ListResponseBaseOfPostCategory {
+  result(
+    skip: Int
+    take: Int
+    where: PostCategoryFilterInput
+    order: [PostCategorySortInput!]
+  ): PostCategoryCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfPostLike {
+  result: PostLike
+  status: Any
+}
+
+type ListResponseBaseOfPostLike {
+  result(
+    skip: Int
+    take: Int
+    where: PostLikeFilterInput
+    order: [PostLikeSortInput!]
+  ): PostLikeCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfPost {
+  result: Post
+  status: Any
+}
+
+type ListResponseBaseOfPost {
+  result(
+    skip: Int
+    take: Int
+    where: PostFilterInput
+    order: [PostSortInput!]
+  ): PostCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfPostSave {
+  result: PostSave
+  status: Any
+}
+
+type ListResponseBaseOfPostSave {
+  result(
+    skip: Int
+    take: Int
+    where: PostSaveFilterInput
+    order: [PostSaveSortInput!]
+  ): PostSaveCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfPostView {
+  result: PostView
+  status: Any
+}
+
+type ListResponseBaseOfPostView {
+  result(
+    skip: Int
+    take: Int
+    where: PostViewFilterInput
+    order: [PostViewSortInput!]
+  ): PostViewCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfReportComment {
+  result: ReportComment
+  status: Any
+}
+
+type ListResponseBaseOfReportComment {
+  result(
+    skip: Int
+    take: Int
+    where: ReportCommentFilterInput
+    order: [ReportCommentSortInput!]
+  ): ReportCommentCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfReportPost {
+  result: ReportPost
+  status: Any
+}
+
+type ListResponseBaseOfReportPost {
+  result(
+    skip: Int
+    take: Int
+    where: ReportPostFilterInput
+    order: [ReportPostSortInput!]
+  ): ReportPostCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfReportTopicPostComment {
+  result: ReportTopicPostComment
+  status: Any
+}
+
+type ListResponseBaseOfReportTopicPostComment {
+  result(
+    skip: Int
+    take: Int
+    where: ReportTopicPostCommentFilterInput
+    order: [ReportTopicPostCommentSortInput!]
+  ): ReportTopicPostCommentCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfReportTopicPost {
+  result: ReportTopicPost
+  status: Any
+}
+
+type ListResponseBaseOfReportTopicPost {
+  result(
+    skip: Int
+    take: Int
+    where: ReportTopicPostFilterInput
+    order: [ReportTopicPostSortInput!]
+  ): ReportTopicPostCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfReportUser {
+  result: ReportUser
+  status: Any
+}
+
+type ListResponseBaseOfReportUser {
+  result(
+    skip: Int
+    take: Int
+    where: ReportUserFilterInput
+    order: [ReportUserSortInput!]
+  ): ReportUserCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfTopicPostCommentLike {
+  result: TopicPostCommentLike
+  status: Any
+}
+
+type ListResponseBaseOfTopicPostCommentLike {
+  result(
+    skip: Int
+    take: Int
+    where: TopicPostCommentLikeFilterInput
+    order: [TopicPostCommentLikeSortInput!]
+  ): TopicPostCommentLikeCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfTopicPostComment {
+  result: TopicPostComment
+  status: Any
+}
+
+type ListResponseBaseOfTopicPostComment {
+  result(
+    skip: Int
+    take: Int
+    where: TopicPostCommentFilterInput
+    order: [TopicPostCommentSortInput!]
+  ): TopicPostCommentCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfTopicPostLike {
+  result: TopicPostLike
+  status: Any
+}
+
+type ListResponseBaseOfTopicPostLike {
+  result(
+    skip: Int
+    take: Int
+    where: TopicPostLikeFilterInput
+    order: [TopicPostLikeSortInput!]
+  ): TopicPostLikeCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfTopicPost {
+  result: TopicPost
+  status: Any
+}
+
+type ListResponseBaseOfTopicPost {
+  result(
+    skip: Int
+    take: Int
+    where: TopicPostFilterInput
+    order: [TopicPostSortInput!]
+  ): TopicPostCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfTopic {
+  result: Topic
+  status: Any
+}
+
+type ListResponseBaseOfTopic {
+  result(
+    skip: Int
+    take: Int
+    where: TopicFilterInput
+    order: [TopicSortInput!]
+  ): TopicCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfTopicUser {
+  result: TopicUser
+  status: Any
+}
+
+type ListResponseBaseOfTopicUser {
+  result(
+    skip: Int
+    take: Int
+    where: TopicUserFilterInput
+    order: [TopicUserSortInput!]
+  ): TopicUserCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfUserCategory {
+  result: UserCategory
+  status: Any
+}
+
+type ListResponseBaseOfUserCategory {
+  result(
+    skip: Int
+    take: Int
+    where: UserCategoryFilterInput
+    order: [UserCategorySortInput!]
+  ): UserCategoryCollectionSegment
+  status: Any
+}
+
+type SingleResponseBaseOfUser {
+  result: User
+  status: Any
+}
+
+type ListResponseBaseOfUser {
+  result(
+    skip: Int
+    take: Int
+    where: UserFilterInput
+    order: [UserSortInput!]
+  ): UserCollectionSegment
+  status: Any
+}
+
+type ResponseBaseOfActivity {
+  result: Activity
+  status: Any
+}
+
+input ActivityInput {
+  userId: Int!
+  targetUserId: Int
+  targetPostId: Int
+  targetCommentId: Int
+  activityType: ActivityType!
+  id: Int
+}
+
+type ResponseStatus {
+  code: Int!
+  value: String
+}
+
+type ResponseBaseOfBaseCollection {
+  result: BaseCollection
+  status: Any
+}
+
+input BaseCollectionInput {
+  userId: Int
+  title: String
+  id: Int
+}
+
+type ResponseBaseOfBlock {
+  result: Block
+  status: Any
+}
+
+input BlockInput {
+  blockerUserId: Int!
+  blockedUserId: Int!
+  id: Int
+}
+
+type ResponseBaseOfCategory {
+  result: Category
+  status: Any
+}
+
+input CategoryInput {
+  title: String
+  isActive: Boolean!
+  postCount: Int
+  likeCount: Int
+  commentCount: Int
+  id: Int
+}
+
+type ResponseBaseOfCollection {
+  result: Collection
+  status: Any
+}
+
+input CollectionInput {
+  baseCollectionId: Int!
+  postId: Int!
+  id: Int
+}
+
+type ResponseBaseOfCommentLike {
+  result: CommentLike
+  status: Any
+}
+
+input CommentLikeInput {
+  userId: Int!
+  commentId: Int!
+  id: Int
+}
+
+type ResponseBaseOfComment {
+  result: Comment
+  status: Any
+}
+
+input CommentInput {
+  commentText: String
+  likeCount: Int!
+  userId: Int!
+  parentId: Int
+  postId: Int!
+  id: Int
+}
+
+type ResponseBaseOfFollow {
+  result: Follow
+  status: Any
+}
+
+input FollowInput {
+  followerId: Int!
+  followingId: Int!
+  id: Int
+}
+
+type ResponseBaseOfPostCategory {
+  result: PostCategory
+  status: Any
+}
+
+input PostCategoryInput {
+  postId: Int!
+  categoryId: Int!
+  id: Int
+}
+
+type ResponseBaseOfPostLike {
+  result: PostLike
+  status: Any
+}
+
+input PostLikeInput {
+  userId: Int!
+  postId: Int!
+  id: Int
+}
+
+type ResponseBaseOfPost {
+  result: Post
+  status: Any
+}
+
+input PostInput {
+  fileUrl: String
+  fileType: FileType!
+  caption: String
+  viewCount: Int!
+  userId: Int!
+  postLikeCount: Int
+  commentCount: Int
+  reportCount: Int
+  id: Int
+}
+
+type ResponseBaseOfPostSave {
+  result: PostSave
+  status: Any
+}
+
+input PostSaveInput {
+  postId: Int!
+  id: Int
+}
+
+type ResponseBaseOfPostView {
+  result: PostView
+  status: Any
+}
+
+input PostViewInput {
+  userId: Int!
+  postId: Int!
+  id: Int
+}
+
+type ResponseBaseOfReportComment {
+  result: ReportComment
+  status: Any
+}
+
+input ReportCommentInput {
+  violationType: ViolationType!
+  description: String
+  reporterUserId: Int!
+  commentId: Int!
+  isReviewed: Boolean!
+  adminId: Int
+  id: Int
+}
+
+type ResponseBaseOfReportPost {
+  result: ReportPost
+  status: Any
+}
+
+input ReportPostInput {
+  violationType: ViolationType!
+  description: String
+  reporterUserId: Int!
+  postId: Int!
+  isReviewed: Boolean!
+  adminId: Int
+  id: Int
+}
+
+type ResponseBaseOfReportTopicPostComment {
+  result: ReportTopicPostComment
+  status: Any
+}
+
+input ReportTopicPostCommentInput {
+  violationType: ViolationType!
+  description: String
+  reporterUserId: Int!
+  topicPostCommentId: Int!
+  isReviewed: Boolean!
+  adminId: Int
+  id: Int
+}
+
+type ResponseBaseOfReportTopicPost {
+  result: ReportTopicPost
+  status: Any
+}
+
+input ReportTopicPostInput {
+  violationType: ViolationType!
+  description: String
+  reporterUserId: Int!
+  topicPostId: Int!
+  isReviewed: Boolean!
+  adminId: Int
+  id: Int
+}
+
+type ResponseBaseOfReportUser {
+  result: ReportUser
+  status: Any
+}
+
+input ReportUserInput {
+  description: String
+  reporterUserId: Int!
+  reportedUserId: Int!
+  violationType: ViolationType!
+  isReviewed: Boolean!
+  adminId: Int
+  id: Int
+}
+
+type ResponseBaseOfTopic {
+  result: Topic
+  status: Any
+}
+
+input TopicInput {
+  title: String
+  description: String
+  id: Int
+}
+
+type ResponseBaseOfTopicPostCommentLike {
+  result: TopicPostCommentLike
+  status: Any
+}
+
+input TopicPostCommentLikeInput {
+  userId: Int!
+  topicPostCommentId: Int!
+  id: Int
+}
+
+type ResponseBaseOfTopicPostComment {
+  result: TopicPostComment
+  status: Any
+}
+
+input TopicPostCommentInput {
+  commentText: String
+  likeCount: Int!
+  userId: Int!
+  parentId: Int
+  topicPostId: Int!
+  id: Int
+}
+
+type ResponseBaseOfTopicPostLike {
+  result: TopicPostLike
+  status: Any
+}
+
+input TopicPostLikeInput {
+  userId: Int!
+  topicPostId: Int!
+  id: Int
+}
+
+type ResponseBaseOfTopicPost {
+  result: TopicPost
+  status: Any
+}
+
+input TopicPostInput {
+  caption: String
+  topicId: Int!
+  userId: Int!
+  fileUrl: String
+  fileType: FileType!
+  viewCount: Int!
+  likeCount: Int!
+  reportCount: Int
+  commentCount: Int
+  id: Int
+}
+
+type ResponseBaseOfTopicUser {
+  result: TopicUser
+  status: Any
+}
+
+input TopicUserInput {
+  topicId: Int!
+  userId: Int!
+  invitedByUserId: Int
+  id: Int
+}
+
+type ResponseBaseOfUserCategory {
+  result: UserCategory
+  status: Any
+}
+
+input UserCategoryInput {
+  userId: Int!
+  categoryId: Int!
+  id: Int
+}
+
+type ResponseBaseOfUser {
+  result: User
+  status: Any
+}
+
+input UserInput {
+  userName: String
+  photoUrl: String
+  fullName: String
+  location: Position
+  aboutText: String
+  phoneNumber: String
+  disabledByUserId: Int
+  referralCode: String
+  id: Int
+}
+
+scalar Any
+
+input ActivityFilterInput {
+  and: [ActivityFilterInput!]
+  or: [ActivityFilterInput!]
+  activityType: ActivityTypeOperationFilterInput
+  user: UserFilterInput
+  targetUser: UserFilterInput
+  targetPost: PostFilterInput
+  targetComment: CommentFilterInput
+  userId: ComparableInt32OperationFilterInput
+  targetUserId: ComparableNullableOfInt32OperationFilterInput
+  targetPostId: ComparableNullableOfInt32OperationFilterInput
+  targetCommentId: ComparableNullableOfInt32OperationFilterInput
+  targetTopicPostCommentId: ComparableNullableOfInt32OperationFilterInput
+  targetTopicPostComment: TopicPostCommentFilterInput
+  targetTopicPost: TopicPostFilterInput
+  targetTopicPostId: ComparableNullableOfInt32OperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ActivitySortInput {
+  activityType: SortEnumType
+  user: UserSortInput
+  targetUser: UserSortInput
+  targetPost: PostSortInput
+  targetComment: CommentSortInput
+  userId: SortEnumType
+  targetUserId: SortEnumType
+  targetPostId: SortEnumType
+  targetCommentId: SortEnumType
+  targetTopicPostCommentId: SortEnumType
+  targetTopicPostComment: TopicPostCommentSortInput
+  targetTopicPost: TopicPostSortInput
+  targetTopicPostId: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type ActivityCollectionSegment {
+  items: [Activity]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input BaseCollectionFilterInput {
+  and: [BaseCollectionFilterInput!]
+  or: [BaseCollectionFilterInput!]
+  userId: ComparableInt32OperationFilterInput
+  title: StringOperationFilterInput
+  user: UserFilterInput
+  collections: ListFilterInputTypeOfCollectionFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input BaseCollectionSortInput {
+  userId: SortEnumType
+  title: SortEnumType
+  user: UserSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type BaseCollectionCollectionSegment {
+  items: [BaseCollection]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input BlockFilterInput {
+  and: [BlockFilterInput!]
+  or: [BlockFilterInput!]
+  blockerUser: UserFilterInput
+  blockedUser: UserFilterInput
+  blockerUserId: ComparableInt32OperationFilterInput
+  blockedUserId: ComparableInt32OperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input BlockSortInput {
+  blockerUser: UserSortInput
+  blockedUser: UserSortInput
+  blockerUserId: SortEnumType
+  blockedUserId: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type BlockCollectionSegment {
+  items: [Block]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input CategoryFilterInput {
+  and: [CategoryFilterInput!]
+  or: [CategoryFilterInput!]
+  title: StringOperationFilterInput
+  isActive: BooleanOperationFilterInput
+  postCount: ComparableNullableOfInt32OperationFilterInput
+  likeCount: ComparableNullableOfInt32OperationFilterInput
+  commentCount: ComparableNullableOfInt32OperationFilterInput
+  postCategories: ListFilterInputTypeOfPostCategoryFilterInput
+  userCategories: ListFilterInputTypeOfUserCategoryFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input CategorySortInput {
+  title: SortEnumType
+  isActive: SortEnumType
+  postCount: SortEnumType
+  likeCount: SortEnumType
+  commentCount: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type CategoryCollectionSegment {
+  items: [Category]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input CollectionFilterInput {
+  and: [CollectionFilterInput!]
+  or: [CollectionFilterInput!]
+  baseCollection: BaseCollectionFilterInput
+  post: PostFilterInput
+  baseCollectionId: ComparableInt32OperationFilterInput
+  postId: ComparableInt32OperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input CollectionSortInput {
+  baseCollection: BaseCollectionSortInput
+  post: PostSortInput
+  baseCollectionId: SortEnumType
+  postId: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type CollectionCollectionSegment {
+  items: [Collection]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input CommentLikeFilterInput {
+  and: [CommentLikeFilterInput!]
+  or: [CommentLikeFilterInput!]
+  userId: ComparableInt32OperationFilterInput
+  commentId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  comment: CommentFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input CommentLikeSortInput {
+  userId: SortEnumType
+  commentId: SortEnumType
+  user: UserSortInput
+  comment: CommentSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type CommentLikeCollectionSegment {
+  items: [CommentLike]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input CommentFilterInput {
+  and: [CommentFilterInput!]
+  or: [CommentFilterInput!]
+  commentText: StringOperationFilterInput
+  user: UserFilterInput
+  parent: CommentFilterInput
+  childComments: ListFilterInputTypeOfCommentFilterInput
+  post: PostFilterInput
+  userId: ComparableInt32OperationFilterInput
+  parentId: ComparableNullableOfInt32OperationFilterInput
+  postId: ComparableInt32OperationFilterInput
+  likeCount: ComparableInt32OperationFilterInput
+  commentLikes: ListFilterInputTypeOfCommentLikeFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input CommentSortInput {
+  commentText: SortEnumType
+  user: UserSortInput
+  parent: CommentSortInput
+  post: PostSortInput
+  userId: SortEnumType
+  parentId: SortEnumType
+  postId: SortEnumType
+  likeCount: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type CommentCollectionSegment {
+  items: [Comment]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input FollowFilterInput {
+  and: [FollowFilterInput!]
+  or: [FollowFilterInput!]
+  follower: UserFilterInput
+  following: UserFilterInput
+  followerId: ComparableInt32OperationFilterInput
+  followingId: ComparableInt32OperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input FollowSortInput {
+  follower: UserSortInput
+  following: UserSortInput
+  followerId: SortEnumType
+  followingId: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type FollowCollectionSegment {
+  items: [Follow]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input HashtagFilterInput {
+  and: [HashtagFilterInput!]
+  or: [HashtagFilterInput!]
+  title: StringOperationFilterInput
+  postHashtags: ListFilterInputTypeOfPostHashtagFilterInput
+  topicPostHashtags: ListFilterInputTypeOfTopicPostHashtagFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input HashtagSortInput {
+  title: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type HashtagCollectionSegment {
+  items: [Hashtag]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input PostCategoryFilterInput {
+  and: [PostCategoryFilterInput!]
+  or: [PostCategoryFilterInput!]
+  post: PostFilterInput
+  category: CategoryFilterInput
+  postId: ComparableInt32OperationFilterInput
+  categoryId: ComparableInt32OperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input PostCategorySortInput {
+  post: PostSortInput
+  category: CategorySortInput
+  postId: SortEnumType
+  categoryId: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type PostCategoryCollectionSegment {
+  items: [PostCategory]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input PostLikeFilterInput {
+  and: [PostLikeFilterInput!]
+  or: [PostLikeFilterInput!]
+  user: UserFilterInput
+  post: PostFilterInput
+  userId: ComparableInt32OperationFilterInput
+  postId: ComparableInt32OperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input PostLikeSortInput {
+  user: UserSortInput
+  post: PostSortInput
+  userId: SortEnumType
+  postId: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type PostLikeCollectionSegment {
+  items: [PostLike]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input PostFilterInput {
+  and: [PostFilterInput!]
+  or: [PostFilterInput!]
+  fileUrl: StringOperationFilterInput
+  fileType: FileTypeOperationFilterInput
+  caption: StringOperationFilterInput
+  viewCount: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  userId: ComparableInt32OperationFilterInput
+  setAsRecommended: BooleanOperationFilterInput
+  postLikeCount: ComparableNullableOfInt32OperationFilterInput
+  commentCount: ComparableNullableOfInt32OperationFilterInput
+  reportCount: ComparableNullableOfInt32OperationFilterInput
+  postCategories: ListFilterInputTypeOfPostCategoryFilterInput
+  comments: ListFilterInputTypeOfCommentFilterInput
+  reportPosts: ListFilterInputTypeOfReportPostFilterInput
+  postLikes: ListFilterInputTypeOfPostLikeFilterInput
+  postViews: ListFilterInputTypeOfPostViewFilterInput
+  collections: ListFilterInputTypeOfCollectionFilterInput
+  targetPost: ListFilterInputTypeOfActivityFilterInput
+  postHashtags: ListFilterInputTypeOfPostHashtagFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input PostSortInput {
+  fileUrl: SortEnumType
+  fileType: SortEnumType
+  caption: SortEnumType
+  viewCount: SortEnumType
+  user: UserSortInput
+  userId: SortEnumType
+  setAsRecommended: SortEnumType
+  postLikeCount: SortEnumType
+  commentCount: SortEnumType
+  reportCount: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type PostCollectionSegment {
+  items: [Post]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input PostSaveFilterInput {
+  and: [PostSaveFilterInput!]
+  or: [PostSaveFilterInput!]
+  user: UserFilterInput
+  post: PostFilterInput
+  userId: ComparableInt32OperationFilterInput
+  postId: ComparableInt32OperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input PostSaveSortInput {
+  user: UserSortInput
+  post: PostSortInput
+  userId: SortEnumType
+  postId: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type PostSaveCollectionSegment {
+  items: [PostSave]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input PostViewFilterInput {
+  and: [PostViewFilterInput!]
+  or: [PostViewFilterInput!]
+  user: UserFilterInput
+  post: PostFilterInput
+  userId: ComparableInt32OperationFilterInput
+  postId: ComparableInt32OperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input PostViewSortInput {
+  user: UserSortInput
+  post: PostSortInput
+  userId: SortEnumType
+  postId: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type PostViewCollectionSegment {
+  items: [PostView]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input ReportCommentFilterInput {
+  and: [ReportCommentFilterInput!]
+  or: [ReportCommentFilterInput!]
+  violationType: ViolationTypeOperationFilterInput
+  description: StringOperationFilterInput
+  reporterUser: UserFilterInput
+  comment: CommentFilterInput
+  reporterUserId: ComparableInt32OperationFilterInput
+  commentId: ComparableInt32OperationFilterInput
+  isReviewed: BooleanOperationFilterInput
+  adminId: ComparableNullableOfInt32OperationFilterInput
+  admin: UserFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ReportCommentSortInput {
+  violationType: SortEnumType
+  description: SortEnumType
+  reporterUser: UserSortInput
+  comment: CommentSortInput
+  reporterUserId: SortEnumType
+  commentId: SortEnumType
+  isReviewed: SortEnumType
+  adminId: SortEnumType
+  admin: UserSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type ReportCommentCollectionSegment {
+  items: [ReportComment]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input ReportPostFilterInput {
+  and: [ReportPostFilterInput!]
+  or: [ReportPostFilterInput!]
+  reporterUser: UserFilterInput
+  post: PostFilterInput
+  violationType: ViolationTypeOperationFilterInput
+  description: StringOperationFilterInput
+  reporterUserId: ComparableInt32OperationFilterInput
+  postId: ComparableInt32OperationFilterInput
+  isReviewed: BooleanOperationFilterInput
+  adminId: ComparableNullableOfInt32OperationFilterInput
+  admin: UserFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ReportPostSortInput {
+  reporterUser: UserSortInput
+  post: PostSortInput
+  violationType: SortEnumType
+  description: SortEnumType
+  reporterUserId: SortEnumType
+  postId: SortEnumType
+  isReviewed: SortEnumType
+  adminId: SortEnumType
+  admin: UserSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type ReportPostCollectionSegment {
+  items: [ReportPost]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input ReportTopicPostCommentFilterInput {
+  and: [ReportTopicPostCommentFilterInput!]
+  or: [ReportTopicPostCommentFilterInput!]
+  violationType: ViolationTypeOperationFilterInput
+  description: StringOperationFilterInput
+  reporterUserId: ComparableInt32OperationFilterInput
+  topicPostCommentId: ComparableInt32OperationFilterInput
+  isReviewed: BooleanOperationFilterInput
+  adminId: ComparableNullableOfInt32OperationFilterInput
+  admin: UserFilterInput
+  reporterUser: UserFilterInput
+  topicPostComment: TopicPostCommentFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ReportTopicPostCommentSortInput {
+  violationType: SortEnumType
+  description: SortEnumType
+  reporterUserId: SortEnumType
+  topicPostCommentId: SortEnumType
+  isReviewed: SortEnumType
+  adminId: SortEnumType
+  admin: UserSortInput
+  reporterUser: UserSortInput
+  topicPostComment: TopicPostCommentSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type ReportTopicPostCommentCollectionSegment {
+  items: [ReportTopicPostComment]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input ReportTopicPostFilterInput {
+  and: [ReportTopicPostFilterInput!]
+  or: [ReportTopicPostFilterInput!]
+  reporterUser: UserFilterInput
+  topicPost: TopicPostFilterInput
+  violationType: ViolationTypeOperationFilterInput
+  description: StringOperationFilterInput
+  reporterUserId: ComparableInt32OperationFilterInput
+  topicPostId: ComparableInt32OperationFilterInput
+  isReviewed: BooleanOperationFilterInput
+  adminId: ComparableNullableOfInt32OperationFilterInput
+  admin: UserFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ReportTopicPostSortInput {
+  reporterUser: UserSortInput
+  topicPost: TopicPostSortInput
+  violationType: SortEnumType
+  description: SortEnumType
+  reporterUserId: SortEnumType
+  topicPostId: SortEnumType
+  isReviewed: SortEnumType
+  adminId: SortEnumType
+  admin: UserSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type ReportTopicPostCollectionSegment {
+  items: [ReportTopicPost]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input ReportUserFilterInput {
+  and: [ReportUserFilterInput!]
+  or: [ReportUserFilterInput!]
+  violationType: ViolationTypeOperationFilterInput
+  description: StringOperationFilterInput
+  reporterUser: UserFilterInput
+  reportedUser: UserFilterInput
+  reporterUserId: ComparableInt32OperationFilterInput
+  reportedUserId: ComparableInt32OperationFilterInput
+  isReviewed: BooleanOperationFilterInput
+  adminId: ComparableNullableOfInt32OperationFilterInput
+  admin: UserFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ReportUserSortInput {
+  violationType: SortEnumType
+  description: SortEnumType
+  reporterUser: UserSortInput
+  reportedUser: UserSortInput
+  reporterUserId: SortEnumType
+  reportedUserId: SortEnumType
+  isReviewed: SortEnumType
+  adminId: SortEnumType
+  admin: UserSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type ReportUserCollectionSegment {
+  items: [ReportUser]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input TopicPostCommentLikeFilterInput {
+  and: [TopicPostCommentLikeFilterInput!]
+  or: [TopicPostCommentLikeFilterInput!]
+  userId: ComparableInt32OperationFilterInput
+  topicPostCommentId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  topicPostComment: TopicPostCommentFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input TopicPostCommentLikeSortInput {
+  userId: SortEnumType
+  topicPostCommentId: SortEnumType
+  user: UserSortInput
+  topicPostComment: TopicPostCommentSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type TopicPostCommentLikeCollectionSegment {
+  items: [TopicPostCommentLike]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input TopicPostCommentFilterInput {
+  and: [TopicPostCommentFilterInput!]
+  or: [TopicPostCommentFilterInput!]
+  commentText: StringOperationFilterInput
+  likeCount: ComparableInt32OperationFilterInput
+  userId: ComparableInt32OperationFilterInput
+  parentId: ComparableNullableOfInt32OperationFilterInput
+  topicPostId: ComparableInt32OperationFilterInput
+  topicPostCommentLikes: ListFilterInputTypeOfTopicPostCommentLikeFilterInput
+  user: UserFilterInput
+  parent: TopicPostCommentFilterInput
+  childComments: ListFilterInputTypeOfTopicPostCommentFilterInput
+  topicPost: TopicPostFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input TopicPostCommentSortInput {
+  commentText: SortEnumType
+  likeCount: SortEnumType
+  userId: SortEnumType
+  parentId: SortEnumType
+  topicPostId: SortEnumType
+  user: UserSortInput
+  parent: TopicPostCommentSortInput
+  topicPost: TopicPostSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type TopicPostCommentCollectionSegment {
+  items: [TopicPostComment]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input TopicPostLikeFilterInput {
+  and: [TopicPostLikeFilterInput!]
+  or: [TopicPostLikeFilterInput!]
+  userId: ComparableInt32OperationFilterInput
+  topicPostId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  topicPost: TopicPostFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input TopicPostLikeSortInput {
+  userId: SortEnumType
+  topicPostId: SortEnumType
+  user: UserSortInput
+  topicPost: TopicPostSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type TopicPostLikeCollectionSegment {
+  items: [TopicPostLike]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input TopicPostFilterInput {
+  and: [TopicPostFilterInput!]
+  or: [TopicPostFilterInput!]
+  caption: StringOperationFilterInput
+  topic: TopicFilterInput
+  topicId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  userId: ComparableInt32OperationFilterInput
+  fileUrl: StringOperationFilterInput
+  fileType: FileTypeOperationFilterInput
+  viewCount: ComparableInt32OperationFilterInput
+  likeCount: ComparableInt32OperationFilterInput
+  setAsRecommended: BooleanOperationFilterInput
+  reportCount: ComparableNullableOfInt32OperationFilterInput
+  commentCount: ComparableNullableOfInt32OperationFilterInput
+  reportTopicPosts: ListFilterInputTypeOfReportTopicPostFilterInput
+  topicPostComments: ListFilterInputTypeOfTopicPostCommentFilterInput
+  topicPostHashtags: ListFilterInputTypeOfTopicPostHashtagFilterInput
+  topicPostLikes: ListFilterInputTypeOfTopicPostLikeFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input TopicPostSortInput {
+  caption: SortEnumType
+  topic: TopicSortInput
+  topicId: SortEnumType
+  user: UserSortInput
+  userId: SortEnumType
+  fileUrl: SortEnumType
+  fileType: SortEnumType
+  viewCount: SortEnumType
+  likeCount: SortEnumType
+  setAsRecommended: SortEnumType
+  reportCount: SortEnumType
+  commentCount: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type TopicPostCollectionSegment {
+  items: [TopicPost]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input TopicFilterInput {
+  and: [TopicFilterInput!]
+  or: [TopicFilterInput!]
+  title: StringOperationFilterInput
+  description: StringOperationFilterInput
+  topicUsers: ListFilterInputTypeOfTopicUserFilterInput
+  topicPosts: ListFilterInputTypeOfTopicPostFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input TopicSortInput {
+  title: SortEnumType
+  description: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type TopicCollectionSegment {
+  items: [Topic]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input TopicUserFilterInput {
+  and: [TopicUserFilterInput!]
+  or: [TopicUserFilterInput!]
+  topic: TopicFilterInput
+  topicId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  userId: ComparableInt32OperationFilterInput
+  invitedByUser: UserFilterInput
+  invitedByUserId: ComparableNullableOfInt32OperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input TopicUserSortInput {
+  topic: TopicSortInput
+  topicId: SortEnumType
+  user: UserSortInput
+  userId: SortEnumType
+  invitedByUser: UserSortInput
+  invitedByUserId: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type TopicUserCollectionSegment {
+  items: [TopicUser]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input UserCategoryFilterInput {
+  and: [UserCategoryFilterInput!]
+  or: [UserCategoryFilterInput!]
+  user: UserFilterInput
+  category: CategoryFilterInput
+  userId: ComparableInt32OperationFilterInput
+  categoryId: ComparableInt32OperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input UserCategorySortInput {
+  user: UserSortInput
+  category: CategorySortInput
+  userId: SortEnumType
+  categoryId: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type UserCategoryCollectionSegment {
+  items: [UserCategory]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input UserFilterInput {
+  and: [UserFilterInput!]
+  or: [UserFilterInput!]
+  userName: StringOperationFilterInput
+  photoUrl: StringOperationFilterInput
+  fullName: StringOperationFilterInput
+  location: PointFilterInput
+  aboutText: StringOperationFilterInput
+  userType: UserTypeOperationFilterInput
+  isActive: BooleanOperationFilterInput
+  disabledByUserId: ComparableNullableOfInt32OperationFilterInput
+  disabledByUser: UserFilterInput
+  phoneNumber: StringOperationFilterInput
+  showNewMessageNotifications: BooleanOperationFilterInput
+  showLikeNotifications: BooleanOperationFilterInput
+  showCommentNotifications: BooleanOperationFilterInput
+  showRecomandationNotifications: BooleanOperationFilterInput
+  showOtherNotifications: BooleanOperationFilterInput
+  referralCode: StringOperationFilterInput
+  inviteByReferralCode: StringOperationFilterInput
+  userCategories: ListFilterInputTypeOfUserCategoryFilterInput
+  posts: ListFilterInputTypeOfPostFilterInput
+  comments: ListFilterInputTypeOfCommentFilterInput
+  reportPosts: ListFilterInputTypeOfReportPostFilterInput
+  reportComments: ListFilterInputTypeOfReportCommentFilterInput
+  postLikes: ListFilterInputTypeOfPostLikeFilterInput
+  baseCollections: ListFilterInputTypeOfBaseCollectionFilterInput
+  followers: ListFilterInputTypeOfFollowFilterInput
+  followings: ListFilterInputTypeOfFollowFilterInput
+  activities: ListFilterInputTypeOfActivityFilterInput
+  buddies: ListFilterInputTypeOfAIBuddyFilterInput
+  lotusTransactions: ListFilterInputTypeOfLotusTransactionsFilterInput
+  buddyUser: AIBuddyFilterInput
+  externalId: StringOperationFilterInput
+  email: StringOperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input UserSortInput {
+  userName: SortEnumType
+  photoUrl: SortEnumType
+  fullName: SortEnumType
+  location: PointSortInput
+  aboutText: SortEnumType
+  userType: SortEnumType
+  isActive: SortEnumType
+  disabledByUserId: SortEnumType
+  disabledByUser: UserSortInput
+  phoneNumber: SortEnumType
+  showNewMessageNotifications: SortEnumType
+  showLikeNotifications: SortEnumType
+  showCommentNotifications: SortEnumType
+  showRecomandationNotifications: SortEnumType
+  showOtherNotifications: SortEnumType
+  referralCode: SortEnumType
+  inviteByReferralCode: SortEnumType
+  buddyUser: AIBuddySortInput
+  externalId: SortEnumType
+  email: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type UserCollectionSegment {
+  items: [User]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input ActivityTypeOperationFilterInput {
+  eq: ActivityType
+  neq: ActivityType
+  in: [ActivityType!]
+  nin: [ActivityType!]
+}
+
+input ComparableInt32OperationFilterInput {
+  eq: Int
+  neq: Int
+  in: [Int!]
+  nin: [Int!]
+  gt: Int
+  ngt: Int
+  gte: Int
+  ngte: Int
+  lt: Int
+  nlt: Int
+  lte: Int
+  nlte: Int
+}
+
+input ComparableNullableOfInt32OperationFilterInput {
+  eq: Int
+  neq: Int
+  in: [Int]
+  nin: [Int]
+  gt: Int
+  ngt: Int
+  gte: Int
+  ngte: Int
+  lt: Int
+  nlt: Int
+  lte: Int
+  nlte: Int
+}
+
+input BooleanOperationFilterInput {
+  eq: Boolean
+  neq: Boolean
+}
+
+input ComparableDateTimeOperationFilterInput {
+  eq: DateTime
+  neq: DateTime
+  in: [DateTime!]
+  nin: [DateTime!]
+  gt: DateTime
+  ngt: DateTime
+  gte: DateTime
+  ngte: DateTime
+  lt: DateTime
+  nlt: DateTime
+  lte: DateTime
+  nlte: DateTime
+}
+
+input ComparableNullableOfDateTimeOperationFilterInput {
+  eq: DateTime
+  neq: DateTime
+  in: [DateTime]
+  nin: [DateTime]
+  gt: DateTime
+  ngt: DateTime
+  gte: DateTime
+  ngte: DateTime
+  lt: DateTime
+  nlt: DateTime
+  lte: DateTime
+  nlte: DateTime
+}
+
+type Activity {
+  activityType: ActivityType!
+  user: User
+  targetUser: User
+  targetPost: Post
+  targetComment: Comment
+  userId: Int!
+  targetUserId: Int
+  targetPostId: Int
+  targetCommentId: Int
+  targetTopicPostCommentId: Int
+  targetTopicPostComment: TopicPostComment
+  targetTopicPost: TopicPost
+  targetTopicPostId: Int
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+"""
+Information about the offset pagination.
+"""
+type CollectionSegmentInfo {
+  """
+  Indicates whether more items exist following the set defined by the clients arguments.
+  """
+  hasNextPage: Boolean!
+
+  """
+  Indicates whether more items exist prior the set defined by the clients arguments.
+  """
+  hasPreviousPage: Boolean!
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String
+  neq: String
+  contains: String
+  ncontains: String
+  in: [String]
+  nin: [String]
+  startsWith: String
+  nstartsWith: String
+  endsWith: String
+  nendsWith: String
+}
+
+input ListFilterInputTypeOfCollectionFilterInput {
+  all: CollectionFilterInput
+  none: CollectionFilterInput
+  some: CollectionFilterInput
+  any: Boolean
+}
+
+type BaseCollection {
+  userId: Int!
+  title: String
+  user: User
+  collections: [Collection]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type Block {
+  blockerUser: User
+  blockedUser: User
+  blockerUserId: Int!
+  blockedUserId: Int!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ListFilterInputTypeOfPostCategoryFilterInput {
+  all: PostCategoryFilterInput
+  none: PostCategoryFilterInput
+  some: PostCategoryFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfUserCategoryFilterInput {
+  all: UserCategoryFilterInput
+  none: UserCategoryFilterInput
+  some: UserCategoryFilterInput
+  any: Boolean
+}
+
+type Category {
+  title: String
+  isActive: Boolean!
+  postCount: Int
+  likeCount: Int
+  commentCount: Int
+  postCategories: [PostCategory]
+  userCategories: [UserCategory]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type Collection {
+  baseCollection: BaseCollection
+  post: Post
+  baseCollectionId: Int!
+  postId: Int!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type CommentLike {
+  userId: Int!
+  commentId: Int!
+  user: User
+  comment: Comment
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ListFilterInputTypeOfCommentFilterInput {
+  all: CommentFilterInput
+  none: CommentFilterInput
+  some: CommentFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfCommentLikeFilterInput {
+  all: CommentLikeFilterInput
+  none: CommentLikeFilterInput
+  some: CommentLikeFilterInput
+  any: Boolean
+}
+
+type Comment {
+  commentText: String
+  user: User
+  parent: Comment
+  childComments: [Comment]
+  post: Post
+  userId: Int!
+  parentId: Int
+  postId: Int!
+  likeCount: Int!
+  commentLikes: [CommentLike]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type Follow {
+  follower: User
+  following: User
+  followerId: Int!
+  followingId: Int!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ListFilterInputTypeOfPostHashtagFilterInput {
+  all: PostHashtagFilterInput
+  none: PostHashtagFilterInput
+  some: PostHashtagFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfTopicPostHashtagFilterInput {
+  all: TopicPostHashtagFilterInput
+  none: TopicPostHashtagFilterInput
+  some: TopicPostHashtagFilterInput
+  any: Boolean
+}
+
+type Hashtag {
+  title: String
+  postHashtags: [PostHashtag]
+  topicPostHashtags: [TopicPostHashtag]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type PostCategory {
+  post: Post
+  category: Category
+  postId: Int!
+  categoryId: Int!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type PostLike {
+  user: User
+  post: Post
+  userId: Int!
+  postId: Int!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input FileTypeOperationFilterInput {
+  eq: FileType
+  neq: FileType
+  in: [FileType!]
+  nin: [FileType!]
+}
+
+input ListFilterInputTypeOfReportPostFilterInput {
+  all: ReportPostFilterInput
+  none: ReportPostFilterInput
+  some: ReportPostFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfPostLikeFilterInput {
+  all: PostLikeFilterInput
+  none: PostLikeFilterInput
+  some: PostLikeFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfPostViewFilterInput {
+  all: PostViewFilterInput
+  none: PostViewFilterInput
+  some: PostViewFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfActivityFilterInput {
+  all: ActivityFilterInput
+  none: ActivityFilterInput
+  some: ActivityFilterInput
+  any: Boolean
+}
+
+type Post {
+  fileUrl: String
+  fileType: FileType!
+  caption: String
+  viewCount: Int!
+  user: User
+  userId: Int!
+  setAsRecommended: Boolean!
+  postLikeCount: Int
+  commentCount: Int
+  reportCount: Int
+  postCategories: [PostCategory]
+  comments: [Comment]
+  reportPosts: [ReportPost]
+  postLikes: [PostLike]
+  postViews: [PostView]
+  collections: [Collection]
+  targetPost: [Activity]
+  postHashtags: [PostHashtag]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type PostSave {
+  user: User
+  post: Post
+  userId: Int!
+  postId: Int!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type PostView {
+  user: User
+  post: Post
+  userId: Int!
+  postId: Int!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ViolationTypeOperationFilterInput {
+  eq: ViolationType
+  neq: ViolationType
+  in: [ViolationType!]
+  nin: [ViolationType!]
+}
+
+type ReportComment {
+  violationType: ViolationType!
+  description: String
+  reporterUser: User
+  comment: Comment
+  reporterUserId: Int!
+  commentId: Int!
+  isReviewed: Boolean!
+  adminId: Int
+  admin: User
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type ReportPost {
+  reporterUser: User
+  post: Post
+  violationType: ViolationType!
+  description: String
+  reporterUserId: Int!
+  postId: Int!
+  isReviewed: Boolean!
+  adminId: Int
+  admin: User
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type ReportTopicPostComment {
+  violationType: ViolationType!
+  description: String
+  reporterUserId: Int!
+  topicPostCommentId: Int!
+  isReviewed: Boolean!
+  adminId: Int
+  admin: User
+  reporterUser: User
+  topicPostComment: TopicPostComment
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type ReportTopicPost {
+  reporterUser: User
+  topicPost: TopicPost
+  violationType: ViolationType!
+  description: String
+  reporterUserId: Int!
+  topicPostId: Int!
+  isReviewed: Boolean!
+  adminId: Int
+  admin: User
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type ReportUser {
+  violationType: ViolationType!
+  description: String
+  reporterUser: User
+  reportedUser: User
+  reporterUserId: Int!
+  reportedUserId: Int!
+  isReviewed: Boolean!
+  adminId: Int
+  admin: User
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type TopicPostCommentLike {
+  userId: Int!
+  topicPostCommentId: Int!
+  user: User
+  topicPostComment: TopicPostComment
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ListFilterInputTypeOfTopicPostCommentLikeFilterInput {
+  all: TopicPostCommentLikeFilterInput
+  none: TopicPostCommentLikeFilterInput
+  some: TopicPostCommentLikeFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfTopicPostCommentFilterInput {
+  all: TopicPostCommentFilterInput
+  none: TopicPostCommentFilterInput
+  some: TopicPostCommentFilterInput
+  any: Boolean
+}
+
+type TopicPostComment {
+  commentText: String
+  likeCount: Int!
+  userId: Int!
+  parentId: Int
+  topicPostId: Int!
+  topicPostCommentLikes: [TopicPostCommentLike]
+  user: User
+  parent: TopicPostComment
+  childComments: [TopicPostComment]
+  topicPost: TopicPost
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type TopicPostLike {
+  userId: Int!
+  topicPostId: Int!
+  user: User
+  topicPost: TopicPost
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ListFilterInputTypeOfReportTopicPostFilterInput {
+  all: ReportTopicPostFilterInput
+  none: ReportTopicPostFilterInput
+  some: ReportTopicPostFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfTopicPostLikeFilterInput {
+  all: TopicPostLikeFilterInput
+  none: TopicPostLikeFilterInput
+  some: TopicPostLikeFilterInput
+  any: Boolean
+}
+
+type TopicPost {
+  caption: String
+  topic: Topic
+  topicId: Int!
+  user: User
+  userId: Int!
+  fileUrl: String
+  fileType: FileType!
+  viewCount: Int!
+  likeCount: Int!
+  setAsRecommended: Boolean!
+  reportCount: Int
+  commentCount: Int
+  reportTopicPosts: [ReportTopicPost]
+  topicPostComments: [TopicPostComment]
+  topicPostHashtags: [TopicPostHashtag]
+  topicPostLikes: [TopicPostLike]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input ListFilterInputTypeOfTopicUserFilterInput {
+  all: TopicUserFilterInput
+  none: TopicUserFilterInput
+  some: TopicUserFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfTopicPostFilterInput {
+  all: TopicPostFilterInput
+  none: TopicPostFilterInput
+  some: TopicPostFilterInput
+  any: Boolean
+}
+
+type Topic {
+  title: String
+  description: String
+  topicUsers: [TopicUser]
+  topicPosts: [TopicPost]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type TopicUser {
+  topic: Topic
+  topicId: Int!
+  user: User
+  userId: Int!
+  invitedByUser: User
+  invitedByUserId: Int
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type UserCategory {
+  user: User
+  category: Category
+  userId: Int!
+  categoryId: Int!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input PointFilterInput {
+  and: [PointFilterInput!]
+  or: [PointFilterInput!]
+  m: ComparableDoubleOperationFilterInput
+  x: ComparableDoubleOperationFilterInput
+  y: ComparableDoubleOperationFilterInput
+  z: ComparableDoubleOperationFilterInput
+  area: ComparableDoubleOperationFilterInput
+  boundary: GeometryFilterInput
+  centroid: PointFilterInput
+  dimension: DimensionOperationFilterInput
+  envelope: GeometryFilterInput
+  geometryType: StringOperationFilterInput
+  interiorPoint: PointFilterInput
+  isSimple: BooleanOperationFilterInput
+  isValid: BooleanOperationFilterInput
+  length: ComparableDoubleOperationFilterInput
+  numPoints: ComparableInt32OperationFilterInput
+  ogcGeometryType: OgcGeometryTypeOperationFilterInput
+  pointOnSurface: PointFilterInput
+  srid: ComparableInt32OperationFilterInput
+  contains: GeometryContainsOperationFilterInput
+  ncontains: GeometryContainsOperationFilterInput
+  distance: GeometryDistanceOperationFilterInput
+  intersects: GeometryIntersectsOperationFilterInput
+  nintersects: GeometryIntersectsOperationFilterInput
+  overlaps: GeometryOverlapsOperationFilterInput
+  noverlaps: GeometryOverlapsOperationFilterInput
+  touches: GeometryTouchesOperationFilterInput
+  ntouches: GeometryTouchesOperationFilterInput
+  within: GeometryWithinOperationFilterInput
+  nwithin: GeometryWithinOperationFilterInput
+}
+
+input UserTypeOperationFilterInput {
+  eq: UserType
+  neq: UserType
+  in: [UserType!]
+  nin: [UserType!]
+}
+
+input ListFilterInputTypeOfPostFilterInput {
+  all: PostFilterInput
+  none: PostFilterInput
+  some: PostFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfReportCommentFilterInput {
+  all: ReportCommentFilterInput
+  none: ReportCommentFilterInput
+  some: ReportCommentFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfBaseCollectionFilterInput {
+  all: BaseCollectionFilterInput
+  none: BaseCollectionFilterInput
+  some: BaseCollectionFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfFollowFilterInput {
+  all: FollowFilterInput
+  none: FollowFilterInput
+  some: FollowFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfAIBuddyFilterInput {
+  all: AIBuddyFilterInput
+  none: AIBuddyFilterInput
+  some: AIBuddyFilterInput
+  any: Boolean
+}
+
+input ListFilterInputTypeOfLotusTransactionsFilterInput {
+  all: LotusTransactionsFilterInput
+  none: LotusTransactionsFilterInput
+  some: LotusTransactionsFilterInput
+  any: Boolean
+}
+
+input AIBuddyFilterInput {
+  and: [AIBuddyFilterInput!]
+  or: [AIBuddyFilterInput!]
+  ownerId: ComparableInt32OperationFilterInput
+  owner: UserFilterInput
+  userId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  personality: StringOperationFilterInput
+  tags: NullableOfBuddyTagsOperationFilterInput
+  interactionFrequency: NullableOfBuddyInteractionFrequenciesOperationFilterInput
+  interactions: NullableOfBuddyInteractionsOperationFilterInput
+  interactionTypes: NullableOfBuddyInteractionTypesOperationFilterInput
+  tagList: ListBuddyTagsOperationFilterInput
+  interactionList: ListBuddyInteractionsOperationFilterInput
+  interactionTypeList: ListBuddyInteractionTypesOperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input AIBuddySortInput {
+  ownerId: SortEnumType
+  owner: UserSortInput
+  userId: SortEnumType
+  user: UserSortInput
+  personality: SortEnumType
+  tags: SortEnumType
+  interactionFrequency: SortEnumType
+  interactions: SortEnumType
+  interactionTypes: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type User {
+  userName: String
+  photoUrl: String
+  fullName: String
+  location: GeoJSONPointType
+  aboutText: String
+  userType: UserType!
+  isActive: Boolean!
+  disabledByUserId: Int
+  disabledByUser: User
+  phoneNumber: String
+  showNewMessageNotifications: Boolean!
+  showLikeNotifications: Boolean!
+  showCommentNotifications: Boolean!
+  showRecomandationNotifications: Boolean!
+  showOtherNotifications: Boolean!
+  referralCode: String
+  inviteByReferralCode: String
+  userCategories: [UserCategory]
+  posts: [Post]
+  comments: [Comment]
+  reportPosts: [ReportPost]
+  reportComments: [ReportComment]
+  postLikes: [PostLike]
+  baseCollections: [BaseCollection]
+  followers: [Follow]
+  followings: [Follow]
+  activities: [Activity]
+  buddies: [AIBuddy]
+  lotusTransactions: [LotusTransactions]
+  buddyUser: AIBuddy
+  externalId: String
+  email: String
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input PostHashtagFilterInput {
+  and: [PostHashtagFilterInput!]
+  or: [PostHashtagFilterInput!]
+  postId: ComparableInt32OperationFilterInput
+  post: PostFilterInput
+  hashtagId: ComparableInt32OperationFilterInput
+  hashtag: HashtagFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input TopicPostHashtagFilterInput {
+  and: [TopicPostHashtagFilterInput!]
+  or: [TopicPostHashtagFilterInput!]
+  topicPostId: ComparableInt32OperationFilterInput
+  topicPost: TopicPostFilterInput
+  hashtagId: ComparableInt32OperationFilterInput
+  hashtag: HashtagFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ComparableDoubleOperationFilterInput {
+  eq: Float
+  neq: Float
+  in: [Float!]
+  nin: [Float!]
+  gt: Float
+  ngt: Float
+  gte: Float
+  ngte: Float
+  lt: Float
+  nlt: Float
+  lte: Float
+  nlte: Float
+}
+
+input GeometryFilterInput {
+  and: [GeometryFilterInput!]
+  or: [GeometryFilterInput!]
+  area: ComparableDoubleOperationFilterInput
+  boundary: GeometryFilterInput
+  centroid: PointFilterInput
+  dimension: DimensionOperationFilterInput
+  envelope: GeometryFilterInput
+  geometryType: StringOperationFilterInput
+  interiorPoint: PointFilterInput
+  isSimple: BooleanOperationFilterInput
+  isValid: BooleanOperationFilterInput
+  length: ComparableDoubleOperationFilterInput
+  numPoints: ComparableInt32OperationFilterInput
+  ogcGeometryType: OgcGeometryTypeOperationFilterInput
+  pointOnSurface: PointFilterInput
+  srid: ComparableInt32OperationFilterInput
+  contains: GeometryContainsOperationFilterInput
+  ncontains: GeometryContainsOperationFilterInput
+  distance: GeometryDistanceOperationFilterInput
+  intersects: GeometryIntersectsOperationFilterInput
+  nintersects: GeometryIntersectsOperationFilterInput
+  overlaps: GeometryOverlapsOperationFilterInput
+  noverlaps: GeometryOverlapsOperationFilterInput
+  touches: GeometryTouchesOperationFilterInput
+  ntouches: GeometryTouchesOperationFilterInput
+  within: GeometryWithinOperationFilterInput
+  nwithin: GeometryWithinOperationFilterInput
+}
+
+input DimensionOperationFilterInput {
+  eq: Dimension
+  neq: Dimension
+  in: [Dimension!]
+  nin: [Dimension!]
+}
+
+input OgcGeometryTypeOperationFilterInput {
+  eq: OgcGeometryType
+  neq: OgcGeometryType
+  in: [OgcGeometryType!]
+  nin: [OgcGeometryType!]
+}
+
+input GeometryContainsOperationFilterInput {
+  geometry: Geometry!
+  buffer: Float
+}
+
+input GeometryDistanceOperationFilterInput {
+  geometry: Geometry!
+  buffer: Float
+  eq: Float
+  neq: Float
+  in: [Float!]
+  nin: [Float!]
+  gt: Float
+  ngt: Float
+  gte: Float
+  ngte: Float
+  lt: Float
+  nlt: Float
+  lte: Float
+  nlte: Float
+}
+
+input GeometryIntersectsOperationFilterInput {
+  geometry: Geometry!
+  buffer: Float
+}
+
+input GeometryOverlapsOperationFilterInput {
+  geometry: Geometry!
+  buffer: Float
+}
+
+input GeometryTouchesOperationFilterInput {
+  geometry: Geometry!
+  buffer: Float
+}
+
+input GeometryWithinOperationFilterInput {
+  geometry: Geometry!
+  buffer: Float
+}
+
+input LotusTransactionsFilterInput {
+  and: [LotusTransactionsFilterInput!]
+  or: [LotusTransactionsFilterInput!]
+  userId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  transactionType: LotusTransactionTypesOperationFilterInput
+  transactionMode: LotusTransactionModesOperationFilterInput
+  amount: ComparableSingleOperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input NullableOfBuddyTagsOperationFilterInput {
+  eq: BuddyTags
+  neq: BuddyTags
+  in: [BuddyTags]
+  nin: [BuddyTags]
+}
+
+input NullableOfBuddyInteractionFrequenciesOperationFilterInput {
+  eq: BuddyInteractionFrequencies
+  neq: BuddyInteractionFrequencies
+  in: [BuddyInteractionFrequencies]
+  nin: [BuddyInteractionFrequencies]
+}
+
+input NullableOfBuddyInteractionsOperationFilterInput {
+  eq: BuddyInteractions
+  neq: BuddyInteractions
+  in: [BuddyInteractions]
+  nin: [BuddyInteractions]
+}
+
+input NullableOfBuddyInteractionTypesOperationFilterInput {
+  eq: BuddyInteractionTypes
+  neq: BuddyInteractionTypes
+  in: [BuddyInteractionTypes]
+  nin: [BuddyInteractionTypes]
+}
+
+input ListBuddyTagsOperationFilterInput {
+  all: BuddyTagsOperationFilterInput
+  none: BuddyTagsOperationFilterInput
+  some: BuddyTagsOperationFilterInput
+  any: Boolean
+}
+
+input ListBuddyInteractionsOperationFilterInput {
+  all: BuddyInteractionsOperationFilterInput
+  none: BuddyInteractionsOperationFilterInput
+  some: BuddyInteractionsOperationFilterInput
+  any: Boolean
+}
+
+input ListBuddyInteractionTypesOperationFilterInput {
+  all: BuddyInteractionTypesOperationFilterInput
+  none: BuddyInteractionTypesOperationFilterInput
+  some: BuddyInteractionTypesOperationFilterInput
+  any: Boolean
+}
+
+input LotusTransactionTypesOperationFilterInput {
+  eq: LotusTransactionTypes
+  neq: LotusTransactionTypes
+  in: [LotusTransactionTypes!]
+  nin: [LotusTransactionTypes!]
+}
+
+input LotusTransactionModesOperationFilterInput {
+  eq: LotusTransactionModes
+  neq: LotusTransactionModes
+  in: [LotusTransactionModes!]
+  nin: [LotusTransactionModes!]
+}
+
+input ComparableSingleOperationFilterInput {
+  eq: Float
+  neq: Float
+  in: [Float!]
+  nin: [Float!]
+  gt: Float
+  ngt: Float
+  gte: Float
+  ngte: Float
+  lt: Float
+  nlt: Float
+  lte: Float
+  nlte: Float
+}
+
+input BuddyTagsOperationFilterInput {
+  eq: BuddyTags
+  neq: BuddyTags
+  in: [BuddyTags!]
+  nin: [BuddyTags!]
+}
+
+input BuddyInteractionsOperationFilterInput {
+  eq: BuddyInteractions
+  neq: BuddyInteractions
+  in: [BuddyInteractions!]
+  nin: [BuddyInteractions!]
+}
+
+input BuddyInteractionTypesOperationFilterInput {
+  eq: BuddyInteractionTypes
+  neq: BuddyInteractionTypes
+  in: [BuddyInteractionTypes!]
+  nin: [BuddyInteractionTypes!]
+}
+
+enum ViolationType {
+  SPAM
+  NUDITY_OR_SEXUAL_ACTIVITY
+  HATE_SPEECH_OR_SYMBOLS
+  I_JUST_DONT_LIKE_IT
+  BULLYING_OR_HARASSMENT
+  FALSE_INFORMATION
+  VIOLENCE_OR_DANGEROUS_ORGANIZATIONS
+  SCAM_OR_FRAUD
+  INTELLECTUAL_PROPERTY_VIOLATION
+  SALE_OF_ILLEGAL_OR_REGULATED_GOODS
+  SUICIDE_OR_SELF_INJURY
+  EATING_DISORDER
+  OTHER
+}
+
+enum ActivityType {
+  LIKE
+  UN_LIKE
+  COMMENT
+  SAVE
+  UN_SAVE
+  FOLLOW
+  UN_FOLLOW
+  BLOCK
+  UN_BLOCK
+  SHARE
+  REPORT
+  SHARE_POST
+  TOPIC_POST_LIKE
+  TOPIC_POST_UN_LIKE
+  TOPIC_POST_COMMENT
+  SHARE_TOPIC_POST
+  LIKE_COMMENT
+  DIS_LIKE_COMMENT
+  TOPIC_POST_DELETE_COMMENT
+}
+
+"""
+The `DateTime` scalar represents an ISO-8601 compliant date time type.
+"""
+scalar DateTime
+
+type PostHashtag {
+  postId: Int!
+  post: Post
+  hashtagId: Int!
+  hashtag: Hashtag
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type TopicPostHashtag {
+  topicPostId: Int!
+  topicPost: TopicPost
+  hashtagId: Int!
+  hashtag: Hashtag
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+enum FileType {
+  IMAGE
+  VIDEO
+  NOT_SET
+}
+
+enum UserType {
+  SUPER_ADMIN
+  ADMIN
+  ARTIST
+  AI_BUDDY
+}
+
+type AIBuddy {
+  ownerId: Int!
+  owner: User
+  userId: Int!
+  user: User
+  personality: String
+  tags: BuddyTags
+  interactionFrequency: BuddyInteractionFrequencies
+  interactions: BuddyInteractions
+  interactionTypes: BuddyInteractionTypes
+  tagList: [BuddyTags!]
+  interactionList: [BuddyInteractions!]
+  interactionTypeList: [BuddyInteractionTypes!]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type LotusTransactions {
+  userId: Int!
+  user: User
+  transactionType: LotusTransactionTypes!
+  transactionMode: LotusTransactionModes!
+  amount: Float!
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+enum Dimension {
+  P
+  CURVE
+  SURFACE
+  COLLAPSE
+  DONTCARE
+  TRUE
+  UNKNOWN
+}
+
+enum OgcGeometryType {
+  POINT
+  LINE_STRING
+  POLYGON
+  MULTI_POINT
+  MULTI_LINE_STRING
+  MULTI_POLYGON
+  GEOMETRY_COLLECTION
+  CIRCULAR_STRING
+  COMPOUND_CURVE
+  CURVE_POLYGON
+  MULTI_CURVE
+  MULTI_SURFACE
+  CURVE
+  SURFACE
+  POLYHEDRAL_SURFACE
+  TIN
+}
+
+enum BuddyTags {
+  FUNNY
+  WITTY
+  RELIABLE
+  HONEST
+  MYSTERIOUS
+  PATIENT
+  GENTLE
+}
+
+enum BuddyInteractionFrequencies {
+  ONCE_A_DAY
+  RANDOM
+}
+
+enum BuddyInteractions {
+  GENERATE_COMMENTS
+  SEND_MESSAGES
+}
+
+enum BuddyInteractionTypes {
+  TEXT
+  PHOTO
+  VOICE
+}
+
+enum LotusTransactionTypes {
+  CREATE_BUDDY
+  USER_INVITE
+  BONUS
+}
+
+enum LotusTransactionModes {
+  INCREASE
+  DECREASE
+}
+
+type ResponseBaseOfNotification {
+  result: Notification
+  status: Any
+}
+
+input NotificationInputsInput {
+  title: String!
+  description: String!
+  userId: Int!
+  id: Int
+}
+
+type ListResponseBaseOfNotification {
+  result(
+    skip: Int
+    take: Int
+    where: NotificationFilterInput
+    order: [NotificationSortInput!]
+  ): NotificationCollectionSegment
+  status: Any
+}
+
+input ForwardTopicPostInput {
+  topicPostId: Int
+  conversationId: Int
+  senderId: Int
+  receiverId: Int
+  text: String
+  id: Int
+}
+
+input ForwardPostInput {
+  postId: Int
+  conversationId: Int
+  senderId: Int
+  receiverId: Int
+  text: String
+  id: Int
+}
+
+type ResponseBase {
+  status: Any
+}
+
+input MessageInput {
+  subject: String
+  messageType: MessageType!
+  photoUrl: String
+  postId: Int
+  topicPostId: Int
+  conversationId: Int
+  receiverId: Int
+  text: String
+  id: Int
+}
+
+type ResponseBaseOfMessage {
+  result: Message
+  status: Any
+}
+
+type ResponseBaseOfConversation {
+  result: Conversation
+  status: Any
+}
+
+type ListResponseBaseOfConversationInput {
+  result(
+    skip: Int
+    take: Int
+    where: ConversationInputFilterInput
+    order: [ConversationInputSortInput!]
+  ): ConversationInputCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfMessage {
+  result(
+    skip: Int
+    take: Int
+    where: MessageFilterInput
+    order: [MessageSortInput!]
+  ): MessageCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfTopicPostCommentDto {
+  result(
+    skip: Int
+    take: Int
+    where: TopicPostCommentDtoFilterInput
+    order: [TopicPostCommentDtoSortInput!]
+  ): TopicPostCommentDtoCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfTopicReportDto {
+  result(
+    skip: Int
+    take: Int
+    where: TopicReportDtoFilterInput
+    order: [TopicReportDtoSortInput!]
+  ): TopicReportDtoCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfUsersActivitiesByCountDto {
+  result(
+    skip: Int
+    take: Int
+    where: UsersActivitiesByCountDtoFilterInput
+    order: [UsersActivitiesByCountDtoSortInput!]
+  ): UsersActivitiesByCountDtoCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfFollowerDto {
+  result(
+    skip: Int
+    take: Int
+    where: FollowerDtoFilterInput
+    order: [FollowerDtoSortInput!]
+  ): FollowerDtoCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfCommentDto {
+  result(
+    skip: Int
+    take: Int
+    where: CommentDtoFilterInput
+    order: [CommentDtoSortInput!]
+  ): CommentDtoCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfPostsByCategoryAndFileTypeDto {
+  result(
+    skip: Int
+    take: Int
+    where: PostsByCategoryAndFileTypeDtoFilterInput
+    order: [PostsByCategoryAndFileTypeDtoSortInput!]
+  ): PostsByCategoryAndFileTypeDtoCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfYearlyReportDto {
+  result(
+    skip: Int
+    take: Int
+    where: YearlyReportDtoFilterInput
+    order: [YearlyReportDtoSortInput!]
+  ): YearlyReportDtoCollectionSegment
+  status: Any
+}
+
+type ListResponseBaseOfMonthlyReportDto {
+  result(
+    skip: Int
+    take: Int
+    where: MonthlyReportDtoFilterInput
+    order: [MonthlyReportDtoSortInput!]
+  ): MonthlyReportDtoCollectionSegment
+  status: Any
+}
+
+type ResponseBaseOfUserLotusDto {
+  result: UserLotusDto
+  status: Any
+}
+
+type ListResponseBaseOfBuddyDto {
+  result(
+    skip: Int
+    take: Int
+    where: BuddyDtoFilterInput
+    order: [BuddyDtoSortInput!]
+  ): BuddyDtoCollectionSegment
+  status: Any
+}
+
+input UpdateBuddyInput {
+  id: Int!
+  tags: [BuddyTags!]
+  personality: String
+  photoUrl: String
+  fullName: String
+  interactionFrquency: BuddyInteractionFrequencies!
+  interactions: [BuddyInteractions!]
+  interactionTypes: [BuddyInteractionTypes!]
+}
+
+input InsertBuddyInput {
+  tags: [BuddyTags!]
+  personality: String
+  photoUrl: String
+  fullName: String
+  id: Int
+}
+
+type ResponseBaseOfBuddyDto {
+  result: BuddyDto
+  status: Any
+}
+
+type ListResponseBaseOfUserDistanceDto {
+  result(
+    skip: Int
+    take: Int
+    where: UserDistanceDtoFilterInput
+    order: [UserDistanceDtoSortInput!]
+  ): UserDistanceDtoCollectionSegment
+  status: Any
+}
+
+input UserNotificationDetailInput {
+  showNewMessageNotifications: Boolean!
+  showLikeNotifications: Boolean!
+  showCommentNotifications: Boolean!
+  showRecomandationNotifications: Boolean!
+  showOtherNotifications: Boolean!
+  id: Int
+}
+
+type Notification {
+  isDeletedAccount: Boolean!
+  deleteAccountDate: DateTime!
+  title: String
+  description: String
+  isReaded: Boolean!
+  notificationType: NotificationType!
+  activityId: Int
+  activity: Activity
+  topicId: Int
+  topic: Topic
+  messageId: Int
+  message: Message
+  postId: Int
+  post: Post
+  topicPostId: Int
+  topicPost: TopicPost
+  userId: Int!
+  user: User
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type Message {
+  messageType: MessageType!
+  photoUrl: String
+  postId: Int
+  topicPostId: Int
+  post: Post
+  topicPost: TopicPost
+  createdAt: DateTime!
+  conversationId: Int!
+  conversation: Conversation
+  senderId: Int!
+  sender: User
+  text: String
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+input NotificationFilterInput {
+  and: [NotificationFilterInput!]
+  or: [NotificationFilterInput!]
+  isDeletedAccount: BooleanOperationFilterInput
+  deleteAccountDate: ComparableDateTimeOperationFilterInput
+  title: StringOperationFilterInput
+  description: StringOperationFilterInput
+  isReaded: BooleanOperationFilterInput
+  notificationType: NotificationTypeOperationFilterInput
+  activityId: ComparableNullableOfInt32OperationFilterInput
+  activity: ActivityFilterInput
+  topicId: ComparableNullableOfInt32OperationFilterInput
+  topic: TopicFilterInput
+  messageId: ComparableNullableOfInt32OperationFilterInput
+  message: MessageFilterInput
+  postId: ComparableNullableOfInt32OperationFilterInput
+  post: PostFilterInput
+  topicPostId: ComparableNullableOfInt32OperationFilterInput
+  topicPost: TopicPostFilterInput
+  userId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input NotificationSortInput {
+  isDeletedAccount: SortEnumType
+  deleteAccountDate: SortEnumType
+  title: SortEnumType
+  description: SortEnumType
+  isReaded: SortEnumType
+  notificationType: SortEnumType
+  activityId: SortEnumType
+  activity: ActivitySortInput
+  topicId: SortEnumType
+  topic: TopicSortInput
+  messageId: SortEnumType
+  message: MessageSortInput
+  postId: SortEnumType
+  post: PostSortInput
+  topicPostId: SortEnumType
+  topicPost: TopicPostSortInput
+  userId: SortEnumType
+  user: UserSortInput
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type NotificationCollectionSegment {
+  items: [Notification]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input ConversationInputFilterInput {
+  and: [ConversationInputFilterInput!]
+  or: [ConversationInputFilterInput!]
+  userId: ComparableInt32OperationFilterInput
+  userEmail: StringOperationFilterInput
+  userFullName: StringOperationFilterInput
+  subject: StringOperationFilterInput
+  lastMessageText: StringOperationFilterInput
+  conversationId: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  unreadCount: ComparableInt32OperationFilterInput
+  latestMessageDate: ComparableDateTimeOperationFilterInput
+}
+
+input ConversationInputSortInput {
+  userId: SortEnumType
+  userEmail: SortEnumType
+  userFullName: SortEnumType
+  subject: SortEnumType
+  lastMessageText: SortEnumType
+  conversationId: SortEnumType
+  user: UserSortInput
+  unreadCount: SortEnumType
+  latestMessageDate: SortEnumType
+}
+
+type ConversationInputCollectionSegment {
+  items: [ConversationInput]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input MessageFilterInput {
+  and: [MessageFilterInput!]
+  or: [MessageFilterInput!]
+  messageType: MessageTypeOperationFilterInput
+  photoUrl: StringOperationFilterInput
+  postId: ComparableNullableOfInt32OperationFilterInput
+  topicPostId: ComparableNullableOfInt32OperationFilterInput
+  post: PostFilterInput
+  topicPost: TopicPostFilterInput
+  createdAt: ComparableDateTimeOperationFilterInput
+  conversationId: ComparableInt32OperationFilterInput
+  conversation: ConversationFilterInput
+  senderId: ComparableInt32OperationFilterInput
+  sender: UserFilterInput
+  text: StringOperationFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input MessageSortInput {
+  messageType: SortEnumType
+  photoUrl: SortEnumType
+  postId: SortEnumType
+  topicPostId: SortEnumType
+  post: PostSortInput
+  topicPost: TopicPostSortInput
+  createdAt: SortEnumType
+  conversationId: SortEnumType
+  conversation: ConversationSortInput
+  senderId: SortEnumType
+  sender: UserSortInput
+  text: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type MessageCollectionSegment {
+  items: [Message]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input TopicPostCommentDtoFilterInput {
+  and: [TopicPostCommentDtoFilterInput!]
+  or: [TopicPostCommentDtoFilterInput!]
+  commentText: StringOperationFilterInput
+  likeCount: ComparableInt32OperationFilterInput
+  userId: ComparableInt32OperationFilterInput
+  parentId: ComparableNullableOfInt32OperationFilterInput
+  topicPostId: ComparableInt32OperationFilterInput
+  topicPostCommentLikes: ListFilterInputTypeOfTopicPostCommentLikeFilterInput
+  replyCount: ComparableInt32OperationFilterInput
+  user: UserFilterInput
+  topicPost: TopicPostFilterInput
+  isLiked: BooleanOperationFilterInput
+  id: ComparableNullableOfInt32OperationFilterInput
+}
+
+input TopicPostCommentDtoSortInput {
+  commentText: SortEnumType
+  likeCount: SortEnumType
+  userId: SortEnumType
+  parentId: SortEnumType
+  topicPostId: SortEnumType
+  replyCount: SortEnumType
+  user: UserSortInput
+  topicPost: TopicPostSortInput
+  isLiked: SortEnumType
+  id: SortEnumType
+}
+
+type TopicPostCommentDtoCollectionSegment {
+  items: [TopicPostCommentDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input TopicReportDtoFilterInput {
+  and: [TopicReportDtoFilterInput!]
+  or: [TopicReportDtoFilterInput!]
+  topic: TopicFilterInput
+  commentsCount: ComparableInt32OperationFilterInput
+  likesCount: ComparableInt32OperationFilterInput
+  usersCount: ComparableInt32OperationFilterInput
+}
+
+input TopicReportDtoSortInput {
+  topic: TopicSortInput
+  commentsCount: SortEnumType
+  likesCount: SortEnumType
+  usersCount: SortEnumType
+}
+
+type TopicReportDtoCollectionSegment {
+  items: [TopicReportDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input UsersActivitiesByCountDtoFilterInput {
+  and: [UsersActivitiesByCountDtoFilterInput!]
+  or: [UsersActivitiesByCountDtoFilterInput!]
+  user: UserFilterInput
+  likeCount: ComparableInt32OperationFilterInput
+  commentCount: ComparableInt32OperationFilterInput
+  sharePostCount: ComparableInt32OperationFilterInput
+}
+
+input UsersActivitiesByCountDtoSortInput {
+  user: UserSortInput
+  likeCount: SortEnumType
+  commentCount: SortEnumType
+  sharePostCount: SortEnumType
+}
+
+type UsersActivitiesByCountDtoCollectionSegment {
+  items: [UsersActivitiesByCountDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input FollowerDtoFilterInput {
+  and: [FollowerDtoFilterInput!]
+  or: [FollowerDtoFilterInput!]
+  followerId: ComparableInt32OperationFilterInput
+  followingId: ComparableInt32OperationFilterInput
+  followerUserName: StringOperationFilterInput
+  followerPhotoUrl: StringOperationFilterInput
+  followingUserName: StringOperationFilterInput
+  followingPhotoUrl: StringOperationFilterInput
+  isFollowed: BooleanOperationFilterInput
+}
+
+input FollowerDtoSortInput {
+  followerId: SortEnumType
+  followingId: SortEnumType
+  followerUserName: SortEnumType
+  followerPhotoUrl: SortEnumType
+  followingUserName: SortEnumType
+  followingPhotoUrl: SortEnumType
+  isFollowed: SortEnumType
+}
+
+type FollowerDtoCollectionSegment {
+  items: [FollowerDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input CommentDtoFilterInput {
+  and: [CommentDtoFilterInput!]
+  or: [CommentDtoFilterInput!]
+  commentText: StringOperationFilterInput
+  likeCount: ComparableInt32OperationFilterInput
+  parentId: ComparableNullableOfInt32OperationFilterInput
+  postId: ComparableInt32OperationFilterInput
+  userId: ComparableInt32OperationFilterInput
+  post: PostFilterInput
+  user: UserFilterInput
+  replyCount: ComparableInt32OperationFilterInput
+  commentLikes: ListFilterInputTypeOfCommentLikeFilterInput
+  isLiked: BooleanOperationFilterInput
+  id: ComparableNullableOfInt32OperationFilterInput
+}
+
+input CommentDtoSortInput {
+  commentText: SortEnumType
+  likeCount: SortEnumType
+  parentId: SortEnumType
+  postId: SortEnumType
+  userId: SortEnumType
+  post: PostSortInput
+  user: UserSortInput
+  replyCount: SortEnumType
+  isLiked: SortEnumType
+  id: SortEnumType
+}
+
+type CommentDtoCollectionSegment {
+  items: [CommentDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input PostsByCategoryAndFileTypeDtoFilterInput {
+  and: [PostsByCategoryAndFileTypeDtoFilterInput!]
+  or: [PostsByCategoryAndFileTypeDtoFilterInput!]
+  categoryId: ComparableInt32OperationFilterInput
+  categoryTitle: StringOperationFilterInput
+  count: ComparableInt32OperationFilterInput
+}
+
+input PostsByCategoryAndFileTypeDtoSortInput {
+  categoryId: SortEnumType
+  categoryTitle: SortEnumType
+  count: SortEnumType
+}
+
+type PostsByCategoryAndFileTypeDtoCollectionSegment {
+  items: [PostsByCategoryAndFileTypeDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input YearlyReportDtoFilterInput {
+  and: [YearlyReportDtoFilterInput!]
+  or: [YearlyReportDtoFilterInput!]
+  year: ComparableInt32OperationFilterInput
+  count: ComparableInt32OperationFilterInput
+}
+
+input YearlyReportDtoSortInput {
+  year: SortEnumType
+  count: SortEnumType
+}
+
+type YearlyReportDtoCollectionSegment {
+  items: [YearlyReportDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input MonthlyReportDtoFilterInput {
+  and: [MonthlyReportDtoFilterInput!]
+  or: [MonthlyReportDtoFilterInput!]
+  year: ComparableInt32OperationFilterInput
+  month: ComparableInt32OperationFilterInput
+  count: ComparableInt32OperationFilterInput
+}
+
+input MonthlyReportDtoSortInput {
+  year: SortEnumType
+  month: SortEnumType
+  count: SortEnumType
+}
+
+type MonthlyReportDtoCollectionSegment {
+  items: [MonthlyReportDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input BuddyDtoFilterInput {
+  and: [BuddyDtoFilterInput!]
+  or: [BuddyDtoFilterInput!]
+  id: ComparableInt32OperationFilterInput
+  owner: UserDtoFilterInput
+  user: UserDtoFilterInput
+  personality: StringOperationFilterInput
+  tags: ListBuddyTagsOperationFilterInput
+  interactionFrequency: NullableOfBuddyInteractionFrequenciesOperationFilterInput
+  interactions: ListBuddyInteractionsOperationFilterInput
+  interactionTypes: ListBuddyInteractionTypesOperationFilterInput
+}
+
+input BuddyDtoSortInput {
+  id: SortEnumType
+  owner: UserDtoSortInput
+  user: UserDtoSortInput
+  personality: SortEnumType
+  interactionFrequency: SortEnumType
+}
+
+type BuddyDtoCollectionSegment {
+  items: [BuddyDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input UserDistanceDtoFilterInput {
+  and: [UserDistanceDtoFilterInput!]
+  or: [UserDistanceDtoFilterInput!]
+  id: ComparableInt32OperationFilterInput
+  userName: StringOperationFilterInput
+  photoUrl: StringOperationFilterInput
+  fullName: StringOperationFilterInput
+  location: CoordinateFilterInput
+  aboutText: StringOperationFilterInput
+  phoneNumber: StringOperationFilterInput
+  distance: ComparableDoubleOperationFilterInput
+}
+
+input UserDistanceDtoSortInput {
+  id: SortEnumType
+  userName: SortEnumType
+  photoUrl: SortEnumType
+  fullName: SortEnumType
+  location: CoordinateSortInput
+  aboutText: SortEnumType
+  phoneNumber: SortEnumType
+  distance: SortEnumType
+}
+
+type UserDistanceDtoCollectionSegment {
+  items: [UserDistanceDto]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: CollectionSegmentInfo!
+  totalCount: Int!
+}
+
+input NotificationTypeOperationFilterInput {
+  eq: NotificationType
+  neq: NotificationType
+  in: [NotificationType!]
+  nin: [NotificationType!]
+}
+
+type ConversationInput {
+  userId: Int!
+  userEmail: String
+  userFullName: String
+  subject: String
+  lastMessageText: String
+  conversationId: Int!
+  user: User
+  unreadCount: Int!
+  latestMessageDate: DateTime!
+}
+
+input MessageTypeOperationFilterInput {
+  eq: MessageType
+  neq: MessageType
+  in: [MessageType!]
+  nin: [MessageType!]
+}
+
+input ConversationFilterInput {
+  and: [ConversationFilterInput!]
+  or: [ConversationFilterInput!]
+  isFirstUserDeletedAccount: BooleanOperationFilterInput
+  firstUserDeleteAccountDate: ComparableDateTimeOperationFilterInput
+  isSecondUserDeletedAccount: BooleanOperationFilterInput
+  secondUserDeleteAccountDate: ComparableDateTimeOperationFilterInput
+  subject: StringOperationFilterInput
+  firstUserId: ComparableInt32OperationFilterInput
+  firstUser: UserFilterInput
+  secondUserId: ComparableInt32OperationFilterInput
+  secondUser: UserFilterInput
+  firstUnreadCount: ComparableInt32OperationFilterInput
+  secondUnreadCount: ComparableInt32OperationFilterInput
+  latestMessageDate: ComparableDateTimeOperationFilterInput
+  messages: ListFilterInputTypeOfMessageFilterInput
+  id: ComparableInt32OperationFilterInput
+  isDeleted: BooleanOperationFilterInput
+  createdDate: ComparableDateTimeOperationFilterInput
+  lastModifiedDate: ComparableNullableOfDateTimeOperationFilterInput
+}
+
+input ConversationSortInput {
+  isFirstUserDeletedAccount: SortEnumType
+  firstUserDeleteAccountDate: SortEnumType
+  isSecondUserDeletedAccount: SortEnumType
+  secondUserDeleteAccountDate: SortEnumType
+  subject: SortEnumType
+  firstUserId: SortEnumType
+  firstUser: UserSortInput
+  secondUserId: SortEnumType
+  secondUser: UserSortInput
+  firstUnreadCount: SortEnumType
+  secondUnreadCount: SortEnumType
+  latestMessageDate: SortEnumType
+  id: SortEnumType
+  isDeleted: SortEnumType
+  createdDate: SortEnumType
+  lastModifiedDate: SortEnumType
+}
+
+type TopicPostCommentDto {
+  commentText: String
+  likeCount: Int!
+  userId: Int!
+  parentId: Int
+  topicPostId: Int!
+  topicPostCommentLikes: [TopicPostCommentLike]
+  replyCount: Int!
+  user: User
+  topicPost: TopicPost
+  isLiked: Boolean!
+  id: Int
+}
+
+type TopicReportDto {
+  topic: Topic
+  commentsCount: Int!
+  likesCount: Int!
+  usersCount: Int!
+}
+
+type UsersActivitiesByCountDto {
+  user: User
+  likeCount: Int!
+  commentCount: Int!
+  sharePostCount: Int!
+}
+
+type FollowerDto {
+  followerId: Int!
+  followingId: Int!
+  followerUserName: String
+  followerPhotoUrl: String
+  followingUserName: String
+  followingPhotoUrl: String
+  isFollowed: Boolean!
+}
+
+type CommentDto {
+  commentText: String
+  likeCount: Int!
+  parentId: Int
+  postId: Int!
+  userId: Int!
+  post: Post
+  user: User
+  replyCount: Int!
+  commentLikes: [CommentLike]
+  isLiked: Boolean!
+  id: Int
+}
+
+type PostsByCategoryAndFileTypeDto {
+  categoryId: Int!
+  categoryTitle: String
+  count: Int!
+}
+
+type YearlyReportDto {
+  year: Int!
+  count: Int!
+}
+
+type MonthlyReportDto {
+  year: Int!
+  month: Int!
+  count: Int!
+}
+
+input UserDtoFilterInput {
+  and: [UserDtoFilterInput!]
+  or: [UserDtoFilterInput!]
+  id: ComparableInt32OperationFilterInput
+  userName: StringOperationFilterInput
+  photoUrl: StringOperationFilterInput
+  fullName: StringOperationFilterInput
+  location: PointDtoFilterInput
+  aboutText: StringOperationFilterInput
+  userType: UserTypeOperationFilterInput
+  isActive: BooleanOperationFilterInput
+  phoneNumber: StringOperationFilterInput
+}
+
+input UserDtoSortInput {
+  id: SortEnumType
+  userName: SortEnumType
+  photoUrl: SortEnumType
+  fullName: SortEnumType
+  location: PointDtoSortInput
+  aboutText: SortEnumType
+  userType: SortEnumType
+  isActive: SortEnumType
+  phoneNumber: SortEnumType
+}
+
+type BuddyDto {
+  id: Int!
+  owner: UserDto
+  user: UserDto
+  personality: String
+  tags: [BuddyTags!]
+  interactionFrequency: BuddyInteractionFrequencies
+  interactions: [BuddyInteractions!]
+  interactionTypes: [BuddyInteractionTypes!]
+}
+
+input CoordinateFilterInput {
+  and: [CoordinateFilterInput!]
+  or: [CoordinateFilterInput!]
+  x: ComparableDoubleOperationFilterInput
+  y: ComparableDoubleOperationFilterInput
+  z: ComparableDoubleOperationFilterInput
+  m: ComparableDoubleOperationFilterInput
+  coordinateValue: CoordinateFilterInput
+}
+
+input CoordinateSortInput {
+  x: SortEnumType
+  y: SortEnumType
+  z: SortEnumType
+  m: SortEnumType
+  coordinateValue: CoordinateSortInput
+}
+
+type UserDistanceDto {
+  id: Int!
+  userName: String
+  photoUrl: String
+  fullName: String
+  location: Position
+  aboutText: String
+  phoneNumber: String
+  distance: Float!
+}
+
+input ListFilterInputTypeOfMessageFilterInput {
+  all: MessageFilterInput
+  none: MessageFilterInput
+  some: MessageFilterInput
+  any: Boolean
+}
+
+input PointDtoFilterInput {
+  and: [PointDtoFilterInput!]
+  or: [PointDtoFilterInput!]
+  latitude: ComparableDoubleOperationFilterInput
+  longitude: ComparableDoubleOperationFilterInput
+}
+
+input PointDtoSortInput {
+  latitude: SortEnumType
+  longitude: SortEnumType
+}
+
+type UserDto {
+  id: Int!
+  userName: String
+  photoUrl: String
+  fullName: String
+  location: PointDto
+  aboutText: String
+  userType: UserType!
+  isActive: Boolean!
+  phoneNumber: String
+}
+
+enum MessageType {
+  TEXT
+  PHOTO
+  VIDEO
+  VOICE
+  FILE
+  FORWARDED_MESSAGE
+}
+
+enum NotificationType {
+  CREATE_CHAT
+  CREATE_ACTIVITY
+  SET_AS_RECOMMENDED
+  CREATE_TOPIC
+  INVITED_TO_TOPIC
+  POST_DELETED_BY_ADMIN
+}
+
+type UserLotusDto {
+  referralCode: String
+  lotusCount: Int!
+  invitedUsers: [ReferredUserDto]
+}
+
+type Conversation {
+  isFirstUserDeletedAccount: Boolean!
+  firstUserDeleteAccountDate: DateTime!
+  isSecondUserDeletedAccount: Boolean!
+  secondUserDeleteAccountDate: DateTime!
+  subject: String
+  firstUserId: Int!
+  firstUser: User
+  secondUserId: Int!
+  secondUser: User
+  firstUnreadCount: Int!
+  secondUnreadCount: Int!
+  latestMessageDate: DateTime!
+  messages: [Message]
+  id: Int!
+  isDeleted: Boolean!
+  createdDate: DateTime!
+  lastModifiedDate: DateTime
+}
+
+type ReferredUserDto {
+  id: Int!
+  photoUrl: String
+  createdAt: DateTime!
+  fullName: String
+}
+
+type PointDto {
+  latitude: Float!
+  longitude: Float!
+}

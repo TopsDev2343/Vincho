@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "995314049125",
+    "project_id": "aps-vincho-dev",
+    "storage_bucket": "aps-vincho-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:995314049125:android:3576db72a0c6a67f41a68c",
+        "android_client_info": {
+          "package_name": "com.vincho"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "995314049125-4bl2ik0klfcpcjeie0vshgogoarb5rnl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vincho",
+            "certificate_hash": "761b7966c31654c8d2621a1042e9c289f5613e94"
+          }
+        },
+        {
+          "client_id": "995314049125-7hjvet4elqg9mr1n5f280jmu8pbl7s3g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vincho",
+            "certificate_hash": "eea74685f4e98582fb3e1365067f75a26b125bee"
+          }
+        },
+        {
+          "client_id": "995314049125-3rdn6vc0r67p0n2jdan6k035rka8634q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE6JxUpQnY6g0xMheU_M3ACC2E_LhFjgU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "995314049125-3rdn6vc0r67p0n2jdan6k035rka8634q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "995314049125-0gojemji6l19f1k0cgd8kvpj7l8oh8ro.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vincho"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:995314049125:android:e520b99a7af398f541a68c",
+        "android_client_info": {
+          "package_name": "io.apsy.vincho"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "995314049125-3rdn6vc0r67p0n2jdan6k035rka8634q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE6JxUpQnY6g0xMheU_M3ACC2E_LhFjgU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "995314049125-3rdn6vc0r67p0n2jdan6k035rka8634q.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "995314049125-0gojemji6l19f1k0cgd8kvpj7l8oh8ro.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.vincho"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
